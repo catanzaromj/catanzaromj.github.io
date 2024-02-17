@@ -17,6 +17,14 @@
   },
   "work": [
     {
+      "name": "Geometric Data Analytics, Inc.",
+      "position": "Senior Scientists",
+      "url": "https://geomdata.com",
+      "startDate": "2022-06-13",
+      "endDate": "present",
+      "summary": "Perform fundamental research on machine learning and data science using the tools of Topological Data Analysis. Write performant Python code, serve as PI on research projects, and acquire new funding."
+    },
+    {
       "name": "Iowa State University",
       "position": "Assistant Professor",
       "url": "https://math.iastate.edu",
