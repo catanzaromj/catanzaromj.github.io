@@ -1,7 +1,7 @@
 ---
 layout: page
 title: TDA applied to fMRI
-description: 
+description:
 img: assets/img/acc.png
 importance: 3
 category: work

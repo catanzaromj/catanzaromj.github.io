@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Multiparameter Persistence
-description: 
+description:
 img: assets/img/multip_bar.png
 importance: 2
 category: work
@@ -14,4 +14,4 @@ studying the sub-level sets of a Morse function. Together with Peter Bubenik,
 we propose looking at generic families of Morse functions to study
 multiparameter persistent homology. Using tools from geometric topology, we
 attempt to build a decomposition of the associated multiparameter persistence
-module, analogous to the barcode. 
+module, analogous to the barcode.

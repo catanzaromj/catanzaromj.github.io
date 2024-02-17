@@ -1,7 +1,7 @@
 "bendich":
- - firstname: ["Paul", "P."]
-   url: http://paulbendich.com/index.html
+  - firstname: ["Paul", "P."]
+    url: http://paulbendich.com/index.html
 
 "Wang":
   - firstname: ["Bei", "B."]
-    url : https://sci.utah.edu/~beiwang/
+    url: https://sci.utah.edu/~beiwang/
