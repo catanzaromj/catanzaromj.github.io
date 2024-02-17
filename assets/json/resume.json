@@ -18,6 +18,7 @@
   "work": [
     {
       "name": "Geometric Data Analytics, Inc.",
+      "location": "Durham, NC",
       "position": " Senior Scientist",
       "url": "https://geomdata.com",
       "startDate": "2022-06-13",
@@ -26,6 +27,7 @@
     },
     {
       "name": "Iowa State University",
+      "location": "Ames, IA",
       "position": "Assistant Professor",
       "url": "https://math.iastate.edu",
       "startDate": "2018-08-01",
@@ -34,6 +36,7 @@
     },
     {
       "name": "University of Florida",
+      "location": "Gainesville, FL",
       "position": "Postdoctoral Research Associate",
       "url": "https://math.ufl.edu",
       "startDate": "2016-08-01",
