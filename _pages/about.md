@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: Senior Scientist, Geometric Data Analytics Inc.
+subtitle: Senior Scientist, <a href=https://geomdata.com>Geometric Data Analytics, Inc.</a>
 
 profile:
   align: right
@@ -29,7 +29,8 @@ empirical currents as they arise in physics and statistical mechanics.
 I am currently a Senior Scientist at Geometric Data Analytics, Inc. Prior to this,
 I was an Assistant Professor in the mathematics department at Iowa State University,
 a postdoc at the Unviersity of Florida, and a graduate student at Wayne State University.
-I earned my PhD in 2016 under the supervision of John Klein and Vladimir Chernyak and
-was mentored by Peter Bubenik as a postdoc.
+I earned my PhD in 2016 under the supervision of [John Klein](http://www.klein.wayne.edu/)
+and [Vladimir Chernyak](https://clasprofiles.wayne.edu/profile/av3651) and
+was mentored by [Peter Bubenik](https://people.clas.ufl.edu/peterbubenik/) as a postdoc.
 
 I like to do lots of other things besides math, machine learning, and physics.

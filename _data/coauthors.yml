@@ -7,7 +7,7 @@
     url: https://people.clas.ufl.edu/peterbubenik/
 
 "chernyak":
-  - firstname: ["Vladimir", "V. Y.", "Vladimir Y."]
+  - firstname: ["Vladimir", "Vladimir Y.", "VY"]
     url: https://clasprofiles.wayne.edu/profile/av3651
 
 "fasy":
@@ -18,10 +18,22 @@
   - firstname: ["John", "John R.", "J. R."]
     url: http://www.klein.wayne.edu/
 
+"lazovskis":
+  - firstname: ["Janis", "J", "Jānis"]
+    url: http://jlazovskis.com/
+
 "smith":
-  - firstname: ["Abraham", "Abraham D.", "Abraham David"]
+  - firstname: ["Abraham", "Abraham D.", "Abraham D", "Abraham David"]
     url: http://www.curieux.us/abe/
+
+"vose":
+  - firstname: ["Brantley", "B."]
+    url: https://prismika.github.io/
 
 "wang":
   - firstname: ["Bei", "B."]
     url: https://sci.utah.edu/~beiwang/
+
+"weber":
+  - firstname: ["Eric", "E."]
+    url: https://faculty.sites.iastate.edu/esweber/
