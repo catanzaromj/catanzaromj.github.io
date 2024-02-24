@@ -22,6 +22,10 @@
   - firstname: ["Janis", "J", "Jānis"]
     url: http://jlazovskis.com/
 
+"polly":
+  - firstname: ["James", "James B"]
+    url: http://jamespolly.net/
+
 "smith":
   - firstname: ["Abraham", "Abraham D.", "Abraham D", "Abraham David"]
     url: http://www.curieux.us/abe/
