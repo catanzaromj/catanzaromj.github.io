@@ -2,7 +2,7 @@
 layout: page
 title: projects
 permalink: /projects/
-description: A growing collection of your cool projects.
+description: My research interests surround algebraic topology with an emphasis on applications and mathematical physics. I try to answer questions in topology and physics by using tools from the other. Below is a list and quick synopsis of research projects I have been fortunate enough to work on.
 nav: true
 nav_order: 3
 display_categories: [work, fun]

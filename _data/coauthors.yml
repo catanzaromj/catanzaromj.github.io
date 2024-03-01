@@ -1,34 +1,43 @@
-"adams":
-  - firstname: ["Edwin", "E.", "E. P.", "Edwin Plimpton"]
-    url: https://en.wikipedia.org/wiki/Edwin_Plimpton_Adams
+"bendich":
+  - firstname: ["Paul", "P."]
+    url: http://paulbendich.com/index.html
 
-"podolsky":
-  - firstname: ["Boris", "B.", "B. Y.", "Boris Yakovlevich"]
-    url: https://en.wikipedia.org/wiki/Boris_Podolsky
+"bubenik":
+  - firstname: ["Peter", "P.", "P"]
+    url: https://people.clas.ufl.edu/peterbubenik/
 
-"rosen":
-  - firstname: ["Nathan", "N."]
-    url: https://en.wikipedia.org/wiki/Nathan_Rosen
+"chernyak":
+  - firstname: ["Vladimir", "Vladimir Y.", "VY"]
+    url: https://clasprofiles.wayne.edu/profile/av3651
 
-"bach":
-  - firstname: ["Johann Sebastian", "J. S."]
-    url: https://en.wikipedia.org/wiki/Johann_Sebastian_Bach
+"fasy":
+  - firstname: ["Brittany", "Brittany T.", "Brittany Terese"]
+    url: https://comptag.github.io/brittany-fasy/
 
-  - firstname: ["Carl Philipp Emanuel", "C. P. E."]
-    url: https://en.wikipedia.org/wiki/Carl_Philipp_Emanuel_Bach
+"klein":
+  - firstname: ["John", "John R.", "J. R."]
+    url: http://www.klein.wayne.edu/
 
-"przibram":
-  - firstname: ["Karl"]
-    url: https://link.springer.com/article/10.1007/s00016-019-00242-z
+"lazovskis":
+  - firstname: ["Janis", "J", "Jānis"]
+    url: http://jlazovskis.com/
 
-"schrodinger":
-  - firstname: ["Erwin"]
-    url: https://en.wikipedia.org/wiki/Erwin_Schr%C3%B6dinger
+"polly":
+  - firstname: ["James", "James B"]
+    url: http://jamespolly.net/
 
-"lorentz":
-  - firstname: ["Hendrik Antoon"]
-    url: https://en.wikipedia.org/wiki/Hendrik_Lorentz
+"smith":
+  - firstname: ["Abraham", "Abraham D.", "Abraham D", "Abraham David"]
+    url: http://www.curieux.us/abe/
 
-"planck":
-  - firstname: ["Max"]
-    url: https://en.wikipedia.org/wiki/Max_Planck
+"vose":
+  - firstname: ["Brantley", "B."]
+    url: https://prismika.github.io/
+
+"wang":
+  - firstname: ["Bei", "B."]
+    url: https://sci.utah.edu/~beiwang/
+
+"weber":
+  - firstname: ["Eric", "E."]
+    url: https://faculty.sites.iastate.edu/esweber/
