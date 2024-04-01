@@ -1,43 +1,34 @@
-"bendich":
-  - firstname: ["Paul", "P."]
-    url: http://paulbendich.com/index.html
+"adams":
+  - firstname: ["Edwin", "E.", "E. P.", "Edwin Plimpton"]
+    url: https://en.wikipedia.org/wiki/Edwin_Plimpton_Adams
 
-"bubenik":
-  - firstname: ["Peter", "P.", "P"]
-    url: https://people.clas.ufl.edu/peterbubenik/
+"podolsky":
+  - firstname: ["Boris", "B.", "B. Y.", "Boris Yakovlevich"]
+    url: https://en.wikipedia.org/wiki/Boris_Podolsky
 
-"chernyak":
-  - firstname: ["Vladimir", "Vladimir Y.", "VY"]
-    url: https://clasprofiles.wayne.edu/profile/av3651
+"rosen":
+  - firstname: ["Nathan", "N."]
+    url: https://en.wikipedia.org/wiki/Nathan_Rosen
 
-"fasy":
-  - firstname: ["Brittany", "Brittany T.", "Brittany Terese"]
-    url: https://comptag.github.io/brittany-fasy/
+"bach":
+  - firstname: ["Johann Sebastian", "J. S."]
+    url: https://en.wikipedia.org/wiki/Johann_Sebastian_Bach
 
-"klein":
-  - firstname: ["John", "John R.", "J. R."]
-    url: http://www.klein.wayne.edu/
+  - firstname: ["Carl Philipp Emanuel", "C. P. E."]
+    url: https://en.wikipedia.org/wiki/Carl_Philipp_Emanuel_Bach
 
-"lazovskis":
-  - firstname: ["Janis", "J", "Jānis"]
-    url: http://jlazovskis.com/
+"przibram":
+  - firstname: ["Karl"]
+    url: https://link.springer.com/article/10.1007/s00016-019-00242-z
 
-"polly":
-  - firstname: ["James", "James B"]
-    url: http://jamespolly.net/
+"schrodinger":
+  - firstname: ["Erwin"]
+    url: https://en.wikipedia.org/wiki/Erwin_Schr%C3%B6dinger
 
-"smith":
-  - firstname: ["Abraham", "Abraham D.", "Abraham D", "Abraham David"]
-    url: http://www.curieux.us/abe/
+"lorentz":
+  - firstname: ["Hendrik Antoon"]
+    url: https://en.wikipedia.org/wiki/Hendrik_Lorentz
 
-"vose":
-  - firstname: ["Brantley", "B."]
-    url: https://prismika.github.io/
-
-"wang":
-  - firstname: ["Bei", "B."]
-    url: https://sci.utah.edu/~beiwang/
-
-"weber":
-  - firstname: ["Eric", "E."]
-    url: https://faculty.sites.iastate.edu/esweber/
+"planck":
+  - firstname: ["Max"]
+    url: https://en.wikipedia.org/wiki/Max_Planck
