@@ -2,24 +2,35 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: Senior Scientist, <a href=https://geomdata.com>Geometric Data Analytics, Inc.</a>
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: mike.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
 
-news: true # includes a list of news items
+news: false # includes a list of news items
+latest_posts: false # includes a list of the newest posts
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Hello!
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+I am a mathematician turned data scientist interested in solving
+problems in big data and machine learning. Lately I've been working on
+simplifying machine learning problems using the tools of algebraic topology.
+Before this, I studied topological data analysis and its applications on a
+variety of applied problems, ranging from understanding deep perception models
+to analyzing fMRI data. Once upon a time, I studied stochastic topology and
+empirical currents as they arise in physics and statistical mechanics.
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+I am currently a Senior Scientist at Geometric Data Analytics, Inc. Prior to this,
+I was an Assistant Professor in the mathematics department at Iowa State University,
+a postdoc at the Unviersity of Florida, and a graduate student at Wayne State University.
+I earned my PhD in 2016 under the supervision of [John Klein](http://www.klein.wayne.edu/)
+and [Vladimir Chernyak](https://clasprofiles.wayne.edu/profile/av3651) and
+was mentored by [Peter Bubenik](https://people.clas.ufl.edu/peterbubenik/) as a postdoc.
+
+I like to do lots of other things besides math, machine learning, and physics.
