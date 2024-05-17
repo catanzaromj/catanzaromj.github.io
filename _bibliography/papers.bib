@@ -12,6 +12,7 @@ title: Papers
 
 @article{catanzaro_topological_2024,
 	title = {Topological {Decompositions} {Enhance} {Efficiency} of {Reinforcement} {Learning}},
+	abstract = {Coordinating multiple sensors can be expressed as a reinforcement learning [RL] problem. Deep RL has excelled at observation processing (for example using convolution networks to process gridded data), but it suffers from sample inefficiency. To address this problem, we topologically decompose the total observation space into overlapping components, using the detection of co-incidence or spatial adjacency of the sensors to construct a stratified decomposition analogous. By allowing the RL agent to learn within the context of this decomposition and take advantage of it through action masking, we achieve positive reward and efficient gains over the learning process. We demonstrate performance and efficiency gains through several experiments using a bespoke game implementation that combines RLlib, Griddly, and Gymnasium. We draw analogies between our games and more general co-incidence in sensing space, time, or modality. We find that our decomposition can be combined with modern RL algorithms to learn high-performing sensor control policies, and our pipeline scales well as the number of sensors grows.},
 	language = {en},
 	author = {Catanzaro, Michael J and Dharna, Aaron and Hineman, Jay and Polly, James B and McGoff, Kevin and Smith, Abraham D and Bendich, Paul},
 	year = {2024},
