@@ -5,6 +5,7 @@ title: Papers
 @article{Polly_DeepLM_2024,
   title={Deep Learning Methods for Inference of Sea Surface Kinematics from SWOT Altimetry},
   author={James B. Polly and Kenneth Ball and Michael Catanzaro and Jay Hineman},
+  abstract={Observations of sea surface height (SSH) provided by the Surface Water and Ocean Topography (SWOT) satellite capture features at length scales smaller than the scales on which geostrophic balance is a valid approximation. At these smaller length scales (less than order 100 km) the SSH signature of submesoscale balanced motions are comparable with the signatures of internal gravity waves (IGW). In addition to these non-dynamical features in the SWOT SSH observations, measurements from the SWOT satellite contain noise and errors from a variety of sources. These issues complicate the usual approximation of surface velocity using geostrophic balance as instrument noise and non-dynamical features need to be filtered out. To address these challenges, a recent study [1] has demon-strated the effectiveness of a machine learning approach to infer vorticity from SSH using model data on structured grids. There remain a number of actions needed to extend this method to SWOT measurements. The dimensions and structure of the SWOT observation data differs significantly from the regularly structured model data used in [1]. We have created tools that transform SWOT observations into data structures that are compatible with the existing UNet developed in [1], which was not designed to handle SWOT observations. We revisit the model selection and model architecture of this UNet. We have created methods for handling gaps in SWOT observations including the nadir gap, missing/bad data, and the shape of the swath. These tools also provide some interpolation techniques so that a region of interest larger than the swath may be populated with observations from multiple orbital passes. We present results summarizing the effectiveness of these tools, and discuss the next steps in scaling out these workflows to support global SWOT observations, including validation and fine-tuning.},
   journal={OCEANS 2024 - Halifax},
   year={2024},
   pages={01-08},
@@ -16,6 +17,7 @@ title: Papers
 @article{jin_Implications_2024,
   title = {Implications of {Data} {Topology} for {Deep} {Generative} {Models}},
   author = {Yinzhu, Jin and McDaniel, Rory and Tatro, Joseph N. and Catanzaro, Michael J. and Smith, Abraham D. and Bendich, Paul and Dwyer, Matthew B. and Fletcher, P. Thomas},
+  abstract={Many deep generative models, such as variational autoencoders (VAEs) and generative adversarial networks (GANs), learn an immersion mapping from a standard normal distribution in a low-dimensional latent space into a higher-dimensional data space. As such, these mappings are only capable of producing simple data topologies, i.e., those equivalent to an immersion of Euclidean space. In this work, we demonstrate the limitations of such latent space generative models when trained on data distributions with non-trivial topologies. We do this by training these models on synthetic image datasets with known topologies (spheres, torii, etc.). We then show how this results in failures of both data generation as well as data interpolation. Next, we compare this behavior to two classes of deep generative models that in principle allow for more complex data topologies. First, we look at chart autoencoders (CAEs), which construct a smooth data manifold from multiple latent space chart mappings. Second, we explore score-based models, e.g., denoising diffusion probabilistic models, which estimate gradients of the data distribution without resorting to an explicit mapping to a latent space. Our results show that these models do demonstrate improved ability over latent space models in modeling data distributions with complex topologies, however, challenges still remain.},
   year = {2024},
   journal = {Frontiers in Computer Science},
   volume = {6},
@@ -26,7 +28,7 @@ title: Papers
 
 @article{catanzaro_topological_2024,
 	title = {Topological {Decompositions} {Enhance} {Efficiency} of {Reinforcement} {Learning}},
-	abstract = {Coordinating multiple sensors can be expressed as a reinforcement learning [RL] problem. Deep RL has excelled at observation processing (for example using convolution networks to process gridded data), but it suffers from sample inefficiency. To address this problem, we topologically decompose the total observation space into overlapping components, using the detection of co-incidence or spatial adjacency of the sensors to construct a stratified decomposition analogous. By allowing the RL agent to learn within the context of this decomposition and take advantage of it through action masking, we achieve positive reward and efficient gains over the learning process. We demonstrate performance and efficiency gains through several experiments using a bespoke game implementation that combines RLlib, Griddly, and Gymnasium. We draw analogies between our games and more general co-incidence in sensing space, time, or modality. We find that our decomposition can be combined with modern RL algorithms to learn high-performing sensor control policies, and our pipeline scales well as the number of sensors grows.},
+	abstract = {Coordin,ating multiple sensors can be expressed as a reinforcement learning [RL] problem. Deep RL has excelled at observation processing (for example using convolution networks to process gridded data), but it suffers from sample inefficiency. To address this problem, we topologically decompose the total observation space into overlapping components, using the detection of co-incidence or spatial adjacency of the sensors to construct a stratified decomposition analogous. By allowing the RL agent to learn within the context of this decomposition and take advantage of it through action masking, we achieve positive reward and efficient gains over the learning process. We demonstrate performance and efficiency gains through several experiments using a bespoke game implementation that combines RLlib, Griddly, and Gymnasium. We draw analogies between our games and more general co-incidence in sensing space, time, or modality. We find that our decomposition can be combined with modern RL algorithms to learn high-performing sensor control policies, and our pipeline scales well as the number of sensors grows.},
 	language = {en},
 	author = {Catanzaro, Michael J and Dharna, Aaron and Hineman, Jay and Polly, James B and McGoff, Kevin and Smith, Abraham D and Bendich, Paul},
 	year = {2024},
@@ -54,6 +56,22 @@ title: Papers
  author = {Smith, Abraham and Catanzaro, Michael and Angeloro, Gabrielle and Patel, Nirav and Bendich, Paul},
  booktitle = {Advances in Neural Information Processing Systems},
  pages = {28155--28172},
+ abstract = {For safety and robustness of AI systems, we introduce topological parallax as a
+theoretical and computational tool that compares a trained model to a reference
+dataset to determine whether they have similar multiscale geometric structure.
+Our proofs and examples show that this geometric similarity between dataset and
+model is essential to trustworthy interpolation and perturbation, and we conjecture
+that this new concept will add value to the current debate regarding the unclear
+relationship between “overfitting” and “generalization” in applications of deep-
+learning.
+In typical DNN applications, an explicit geometric description of the model is
+impossible, but parallax can estimate topological features (components, cycles,
+voids, etc.) in the model by examining the effect on the Rips complex of geodesic
+distortions using the reference dataset. Thus, parallax indicates whether the model
+shares similar multiscale geometric features with the dataset.
+Parallax presents theoretically via topological data analysis [TDA] as a bi-filtered
+persistence module, and the key properties of this module are stable under pertur-
+bation of the reference dataset.},
  publisher = {Curran Associates, Inc.},
  title = {Topological Parallax: A Geometric Specification for Deep Perception Models},
  url = {https://proceedings.neurips.cc/paper_files/paper/2023/file/597254dc45be8c166d3ccf0ba2d56325-Paper-Conference.pdf},
