@@ -19,9 +19,4 @@ computed via a topological winding number with an index-like theorem.
 
 The mathematical intersection theory is developed in {% cite catanzaro_exciton_2017 %}.
 We focus on the intersection of a curve with the subspace of matrices with at least
-one eienvalue equal to one inside the manifold of all $$n \times n$$ unitary matrices.
-
-The code is simple.
-Just wrap your images with `<div class="col-sm">` and place them inside `<div class="row">` (read more about the <a href="https://getbootstrap.com/docs/4.4/layout/grid/">Bootstrap Grid</a> system).
-To make images responsive, add `img-fluid` class to each; for rounded corners and shadows use `rounded` and `z-depth-1` classes.
-Here's the code for the last row of images above:
+one eigenvalue equal to one inside the manifold of all $$n \times n$$ unitary matrices.
