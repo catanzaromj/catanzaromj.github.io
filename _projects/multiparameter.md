@@ -15,4 +15,3 @@ we propose looking at generic families of Morse functions to study
 multiparameter persistent homology in {% cite bubenik_multiparameter_2021 %}. Using tools from geometric topology, we
 attempt to build a decomposition of the associated multiparameter persistence
 module, analogous to the barcode.
-
