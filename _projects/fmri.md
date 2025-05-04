@@ -18,4 +18,5 @@ readily available. Using this set-up, we are currently working on understanding
 how task modulation in the ACC can be understood using fMRI through the lens of
 persistent homology. This project has several thrusts, which are joint with
 Vaibhav Diwadkar, Sam Rizzo, Peter Bubenik, Andrew Salch, Adam Regalski, Hassan
-Abdallah, and Raviteja Suryadevara.
+Abdallah, and Raviteja Suryadevara in {% cite catanzaro2023topological %}.
+A general description of these ideas is given in {% cite salch_mathematics_2021 %}.
