@@ -1,47 +1,57 @@
 ---
 layout: page
-permalink: /repositories/
-title: repositories
-description:
+permalink: /code/
+title: code
+description: Technical skills and open source projects.
 nav: true
-nav_order: 4
+nav_order: 2
 ---
 
-## My github page
+## Skills
 
-{% if site.data.repositories.github_users %}
+**Languages:** Python, C++, Rust, SQL
 
-<div class="repositories d-flex flex-wrap flex-md-row flex-column justify-content-between align-items-center">
-  {% for user in site.data.repositories.github_users %}
-    {% include repository/repo_user.liquid username=user %}
-  {% endfor %}
-</div>
+**ML / DL:** PyTorch, TensorFlow
 
----
+**Reinforcement Learning:** Ray RLLib, Farama's Gymnasiumn and PettingZoo
 
-{% if site.repo_trophies.enabled %}
-{% for user in site.data.repositories.github_users %}
-{% if site.data.repositories.github_users.size > 1 %}
+**Agentic & RAG:** LlamaIndex
 
-  <h4>{{ user }}</h4>
-  {% endif %}
-  <div class="repositories d-flex flex-wrap flex-md-row flex-column justify-content-between align-items-center">
-  {% include repository/repo_trophies.liquid username=user %}
-  </div>
+**TDA:** scikit-tda, Gudhi, Giotto-tda
+
+**Infrastructure:** Docker, AWS, Google Cloud Run
 
 ---
 
-{% endfor %}
-{% endif %}
-{% endif %}
+## Open source code
 
-## GitHub Repositories
+I am a maintainer of several libraries in the [scikit-tda](https://github.com/scikit-tda)
+ecosystem, a collection of TDA tools designed to work within scikit-learn pipelines.
 
-{% if site.data.repositories.github_repos %}
+- [**persim**](https://github.com/scikit-tda/persim) -- distances and vectorizations for
+  persistence diagrams, including persistence images and bottleneck/Wasserstein distances
+- [**ripser**](https://github.com/scikit-tda/ripser) -- fast Vietoris-Rips persistent
+  homology for point cloud data, wrapping the optimized C++ ripser library
+- [**kepler-mapper**](https://github.com/scikit-tda/kepler-mapper) -- implementation of
+  the Mapper algorithm for topological data visualization
+- [**tadasets**](https://github.com/scikit-tda/tadasets) -- synthetic datasets and
+  point clouds for benchmarking and testing TDA methods
 
-<div class="repositories d-flex flex-wrap flex-md-row flex-column justify-content-between align-items-center">
-  {% for repo in site.data.repositories.github_repos %}
-    {% include repository/repo.liquid repository=repo %}
-  {% endfor %}
-</div>
-{% endif %}
+I also contributed to two open source libraries developed at
+[Geometric Data Analytics](https://geomdata.com):
+
+- [**topological-parallax**](https://gitlab.com/geomdata/topological-parallax) -- computes
+  the topological mismatch between a pre-trained model and a dataset, providing a
+  geometric measure of model-data alignment
+- [**dispers**](https://gitlab.com/geomdata/dispers) -- a Python interface for distributed
+  persistence, enabling scalable TDA computations across large datasets
+
+## Research code
+
+- [**PL_fMRI**](https://github.com/catanzaromj/PL_fMRI) -- persistence landscape analysis
+  of fMRI data; code accompanying the work on topological features of ACC activation
+- [**MPFigs**](https://github.com/catanzaromj/MPFigs) -- Plotly code for building
+  figures useful to understand multiparameter persistent homology
+- [**MBDS21_TDA**](https://github.com/catanzaromj/MBDS21_TDA) -- tutorial notebooks
+  introducing TDA methods, developed for the 2021 Midwest Big Data Summer School
+- [**MBDS19_TDA**](https://github.com/catanzaromj/MBDS19_TDA) -- similar to the above

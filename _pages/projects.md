@@ -2,10 +2,10 @@
 layout: page
 title: projects
 permalink: /projects/
-description: My research interests surround algebraic topology with an emphasis on applications and mathematical physics. I try to answer questions in topology and physics by using tools from the other. Below is a list and quick synopsis of research projects I have been fortunate enough to work on.
+description: I work on problems where geometry and structure matter, from reinforcement learning and generative models to topological data analysis. My background in algebraic topology gives me a unique perspective on ML. Persistent homology, geometric representations, and shape-aware features show up naturally in problems that standard ML and data science methods struggle with. Below is a selection of projects spanning applied ML, TDA, and some of the mathematical foundations underlying both. 
 nav: true
-nav_order: 3
-display_categories: [work, fun]
+nav_order: 1
+display_categories: [ml, tda, algebraic topology]
 horizontal: false
 ---
 
