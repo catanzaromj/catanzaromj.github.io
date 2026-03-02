@@ -1,5 +1,6 @@
 ---
 layout: page
+published: false
 title: scikit-tda
 description: Open-source maintainer of scikit-tda, a scikit-learn–compatible suite of TDA libraries.
 img:

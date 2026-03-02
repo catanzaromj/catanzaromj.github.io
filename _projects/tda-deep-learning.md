@@ -1,5 +1,6 @@
 ---
 layout: page
+published: false
 title: TDA and Deep Learning
 description: Using persistent homology to uncover geometric structure in deep perception models.
 img:
