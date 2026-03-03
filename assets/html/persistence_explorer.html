@@ -1,1003 +1,1085 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Persistent Homology Explorer</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Spectral:ital,wght@0,300;0,400;1,300&display=swap");
 
-<head>
-  <meta charset="UTF-8">
-  <title>Persistent Homology Explorer</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Spectral:ital,wght@0,300;0,400;1,300&display=swap');
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+      :root {
+        --bg: #0e0f13;
+        --panel: #14151a;
+        --border: #2a2b35;
+        --text: #c8cad4;
+        --dim: #5a5c6e;
+        --h0: #5b9cf6;
+        --h1: #f47c7c;
+        --accent: #a8e6b0;
+        --track: #1e1f28;
+        --thumb: #4a4c5e;
+      }
 
-    :root {
-      --bg: #0e0f13;
-      --panel: #14151a;
-      --border: #2a2b35;
-      --text: #c8cad4;
-      --dim: #5a5c6e;
-      --h0: #5b9cf6;
-      --h1: #f47c7c;
-      --accent: #a8e6b0;
-      --track: #1e1f28;
-      --thumb: #4a4c5e;
-    }
+      [data-theme="light"] {
+        --bg: #f4f3ef;
+        --panel: #faf9f6;
+        --border: #d8d5cc;
+        --text: #2a2820;
+        --dim: #8a8678;
+        --h0: #2563eb;
+        --h1: #dc2626;
+        --accent: #16a34a;
+        --track: #e8e5dc;
+        --thumb: #a8a49a;
+      }
 
-    [data-theme="light"] {
-      --bg: #f4f3ef;
-      --panel: #faf9f6;
-      --border: #d8d5cc;
-      --text: #2a2820;
-      --dim: #8a8678;
-      --h0: #2563eb;
-      --h1: #dc2626;
-      --accent: #16a34a;
-      --track: #e8e5dc;
-      --thumb: #a8a49a;
-    }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+      header {
+        padding: 18px 28px 14px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+      }
 
-    header {
-      padding: 18px 28px 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: baseline;
-      gap: 18px;
-    }
+      header h1 {
+        font-family: "Spectral", serif;
+        font-weight: 300;
+        font-style: italic;
+        font-size: 1.35rem;
+        color: var(--text);
+        letter-spacing: 0.01em;
+      }
 
-    header h1 {
-      font-family: 'Spectral', serif;
-      font-weight: 300;
-      font-style: italic;
-      font-size: 1.35rem;
-      color: var(--text);
-      letter-spacing: 0.01em;
-    }
+      header p {
+        color: var(--dim);
+        font-size: 11px;
+        font-weight: 300;
+      }
 
-    header p {
-      color: var(--dim);
-      font-size: 11px;
-      font-weight: 300;
-    }
+      .main {
+        display: flex;
+        flex: 1;
+        gap: 0;
+      }
 
-    .main {
-      display: flex;
-      flex: 1;
-      gap: 0;
-    }
+      .sidebar {
+        width: 220px;
+        min-width: 220px;
+        border-right: 1px solid var(--border);
+        padding: 20px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
 
-    .sidebar {
-      width: 220px;
-      min-width: 220px;
-      border-right: 1px solid var(--border);
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+      .ctrl-group label {
+        display: block;
+        color: var(--dim);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
 
-    .ctrl-group label {
-      display: block;
-      color: var(--dim);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
+      .ctrl-group select,
+      .ctrl-group input[type="range"] {
+        width: 100%;
+      }
 
-    .ctrl-group select,
-    .ctrl-group input[type=range] {
-      width: 100%;
-    }
+      select {
+        background: var(--track);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 12px;
+        padding: 5px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+        outline: none;
+      }
 
-    select {
-      background: var(--track);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 12px;
-      padding: 5px 8px;
-      border-radius: 3px;
-      cursor: pointer;
-      outline: none;
-    }
+      select:focus {
+        border-color: var(--thumb);
+      }
 
-    select:focus {
-      border-color: var(--thumb);
-    }
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 3px;
+        background: var(--track);
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+        margin-top: 6px;
+      }
 
-    input[type=range] {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 3px;
-      background: var(--track);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-      margin-top: 6px;
-    }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        background: var(--text);
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+        cursor: grab;
+      }
 
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 13px;
-      height: 13px;
-      background: var(--text);
-      border-radius: 50%;
-      border: 2px solid var(--bg);
-      cursor: grab;
-    }
+      input[type="range"]:active::-webkit-slider-thumb {
+        cursor: grabbing;
+      }
 
-    input[type=range]:active::-webkit-slider-thumb {
-      cursor: grabbing;
-    }
+      .val-display {
+        text-align: right;
+        font-size: 11px;
+        color: var(--accent);
+        margin-top: 3px;
+        font-variant-numeric: tabular-nums;
+      }
 
-    .val-display {
-      text-align: right;
-      font-size: 11px;
-      color: var(--accent);
-      margin-top: 3px;
-      font-variant-numeric: tabular-nums;
-    }
+      .toggle-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 6px;
+        border-radius: 3px;
+        cursor: pointer;
+        user-select: none;
+        line-height: 1.6;
+        transition:
+          opacity 0.15s,
+          background 0.15s;
+        border: 1px solid transparent;
+      }
 
-    .toggle-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 4px 6px;
-      border-radius: 3px;
-      cursor: pointer;
-      user-select: none;
-      line-height: 1.6;
-      transition: opacity 0.15s, background 0.15s;
-      border: 1px solid transparent;
-    }
+      .toggle-item:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
 
-    .toggle-item:hover {
-      background: rgba(255, 255, 255, 0.04);
-    }
+      .toggle-item.active {
+        opacity: 1;
+        border-color: transparent;
+      }
 
-    .toggle-item.active {
-      opacity: 1;
-      border-color: transparent;
-    }
+      .toggle-item:not(.active) {
+        opacity: 0.3;
+      }
 
-    .toggle-item:not(.active) {
-      opacity: 0.3;
-    }
+      .toggle-item span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
 
-    .toggle-item span {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+      .legend {
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 11px;
+        line-height: 1.9;
+        color: var(--dim);
+      }
 
-    .legend {
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      line-height: 1.9;
-      color: var(--dim);
-    }
+      .legend span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
 
-    .legend span {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+      .legend .h0c {
+        background: var(--h0);
+      }
 
-    .legend .h0c {
-      background: var(--h0);
-    }
+      .legend .h1c {
+        background: var(--h1);
+      }
 
-    .legend .h1c {
-      background: var(--h1);
-    }
+      .legend .alive {
+        background: var(--accent);
+      }
 
-    .legend .alive {
-      background: var(--accent);
-    }
+      .stats {
+        font-size: 11px;
+        color: var(--dim);
+        line-height: 1.8;
+      }
 
-    .stats {
-      font-size: 11px;
-      color: var(--dim);
-      line-height: 1.8;
-    }
+      .stats strong {
+        color: var(--text);
+        font-weight: 400;
+      }
 
-    .stats strong {
-      color: var(--text);
-      font-weight: 400;
-    }
+      .canvases {
+        flex: 1;
+        display: flex;
+        gap: 0;
+      }
 
-    .canvases {
-      flex: 1;
-      display: flex;
-      gap: 0;
-    }
+      .canvas-wrap {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+      }
 
-    .canvas-wrap {
-      flex: 1;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-    }
+      .canvas-wrap + .canvas-wrap {
+        border-left: 1px solid var(--border);
+      }
 
-    .canvas-wrap+.canvas-wrap {
-      border-left: 1px solid var(--border);
-    }
+      canvas {
+        display: block;
+        border-radius: 4px;
+      }
 
-    canvas {
-      display: block;
-      border-radius: 4px;
-    }
+      .description {
+        padding: 10px 28px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+        font-size: 12px;
+        line-height: 1.7;
+        font-family: "JetBrains Mono", serif;
+      }
 
-    .description {
-      padding: 10px 28px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      font-size: 12px;
-      line-height: 1.7;
-      font-family: 'JetBrains Mono', serif;
-    }
+      .theme-toggle {
+        margin-left: auto;
+        background: none;
+        border: 1px solid var(--border);
+        color: var(--dim);
+        font-family: inherit;
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
 
-    .theme-toggle {
-      margin-left: auto;
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--dim);
-      font-family: inherit;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-      letter-spacing: 0.08em;
-      transition: color 0.15s, border-color 0.15s;
-    }
+      .theme-toggle:hover {
+        color: var(--text);
+        border-color: var(--thumb);
+      }
 
-    .theme-toggle:hover {
-      color: var(--text);
-      border-color: var(--thumb);
-    }
+      .canvas-label {
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--dim);
+        text-align: center;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
 
-    .canvas-label {
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--dim);
-      text-align: center;
-      margin-bottom: 10px;
-    }
-  </style>
-</head>
+  <body>
+    <header>
+      <h1>Persistent Homology Explorer</h1>
+      <p>Vietoris–Rips filtration · Cech filtratin · H₀ components · H₁ loops</p>
+      <button class="theme-toggle" id="themeToggle">☾ dark</button>
+    </header>
 
-<body>
+    <div class="description">
+      <p>
+        This tool allows users to explore persistent homology for several toy datasets in two dimensions. Users can select from different datasets
+        with the dropdown, while simultaneously adjusting parameters like radius and number of points. The persistence diagrams show how topological
+        features (connected components and loops) appear and disappear as the radius increases.
+      </p>
+      <br />
 
-  <header>
-    <h1>Persistent Homology Explorer</h1>
-    <p>Vietoris–Rips filtration · Cech filtratin · H₀ components · H₁ loops</p>
-    <button class="theme-toggle" id="themeToggle">☾ dark</button>
-  </header>
+      <p>
+        Note that by default the Vietoris–Rips persistence diagram is shown. Users can click on the labels in the bottom left under "Toggle Layers" to
+        toggle them on and off in the persistence diagrams.
+      </p>
 
-  <div class="description">
-    <p>This tool allows users to explore persistent homology for several toy datasets in two dimensions.
-      Users can select from different datasets with the dropdown, while simultaneously adjusting parameters like radius
-      and number of points.
-      The persistence diagrams show how topological features (connected components and loops) appear and disappear as
-      the radius increases.
-    </p>
-    <br>
+      <br />
+      <p>
+        The calculations are approximated using a fast algorithm that is not exact for all datasets and may show spurious topological features along
+        the diagonal of the persistence diagram, especially for larger numbers of points. The tool is meant for educational and illustrative purposes
+        rather than precise computation.
+      </p>
+    </div>
 
-    <p>
-      Note that by default the Vietoris–Rips persistence diagram is shown. Users
-      can click on the labels in the bottom left under "Toggle Layers" to toggle them on and off in the persistence
-      diagrams.
-    </p>
+    <div class="main">
+      <div class="sidebar">
+        <div class="ctrl-group">
+          <label>Point set</label>
+          <select id="setSelect">
+            <option value="random">Random</option>
+            <option value="circle">Circle</option>
+            <option value="noisy_circle">Noisy circle</option>
+            <option value="annulus">Annulus</option>
+            <option value="two_clusters">Two clusters</option>
+            <option value="three_clusters">Three clusters</option>
+            <option value="grid">Grid</option>
+            <option value="grid_hole">Grid with hole</option>
+            <option value="figure_eight">Figure-eight</option>
+            <option value="torus">Torus (2D proj.)</option>
+            <option value="spiral">Spiral</option>
+            <option value="diagonal">Diagonal</option>
+            <option value="circle_of_circles">Circle of circles</option>
+          </select>
+        </div>
 
-    <br>
-    <p>The calculations are approximated using a fast algorithm that is not exact for all datasets and
-      may show spurious topological features along the diagonal of the persistence diagram, especially for larger
-      numbers of points. The tool is meant for educational and illustrative purposes rather than precise computation.
-    </p>
-  </div>
+        <div class="ctrl-group">
+          <label>Radius r</label>
+          <input type="range" id="radiusSlider" min="0" max="2.5" step="0.01" value="0" />
+          <div class="val-display" id="radiusVal">0.00</div>
+        </div>
 
-  <div class="main">
-    <div class="sidebar">
-      <div class="ctrl-group">
-        <label>Point set</label>
-        <select id="setSelect">
-          <option value="random">Random</option>
-          <option value="circle">Circle</option>
-          <option value="noisy_circle">Noisy circle</option>
-          <option value="annulus">Annulus</option>
-          <option value="two_clusters">Two clusters</option>
-          <option value="three_clusters">Three clusters</option>
-          <option value="grid">Grid</option>
-          <option value="grid_hole">Grid with hole</option>
-          <option value="figure_eight">Figure-eight</option>
-          <option value="torus">Torus (2D proj.)</option>
-          <option value="spiral">Spiral</option>
-          <option value="diagonal">Diagonal</option>
-          <option value="circle_of_circles">Circle of circles</option>
-        </select>
+        <div class="ctrl-group">
+          <label>Points</label>
+          <input type="range" id="nSlider" min="5" max="40" step="1" value="15" />
+          <div class="val-display" id="nVal">15</div>
+        </div>
+
+        <div class="ctrl-group">
+          <label>Seed</label>
+          <input type="range" id="seedSlider" min="0" max="20" step="1" value="0" />
+          <div class="val-display" id="seedVal">0</div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="legend">
+          <div style="margin-bottom: 8px; font-size: 10px; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase">Toggle layers</div>
+          <div class="toggle-item active" id="tog-rips-h0" data-key="ripsH0"><span style="background: #5b9cf6"></span> Rips H₀</div>
+          <div class="toggle-item active" id="tog-rips-h1" data-key="ripsH1"><span style="background: #f47c7c"></span> Rips H₁</div>
+          <div class="toggle-item" id="tog-cech-h0" data-key="cechH0"><span style="background: #93c5fd"></span> Čech H₀</div>
+          <div class="toggle-item" id="tog-cech-h1" data-key="cechH1"><span style="background: #fca5a5"></span> Čech H₁</div>
+          <div style="margin-top: 10px"><span class="alive"></span> Alive at r</div>
+          <div style="margin-top: 6px; font-size: 10px; line-height: 1.6; color: var(--dim)">
+            △/◇ = infinite death<br />
+            dashed lines = current r
+          </div>
+        </div>
       </div>
 
-      <div class="ctrl-group">
-        <label>Radius r</label>
-        <input type="range" id="radiusSlider" min="0" max="2.5" step="0.01" value="0">
-        <div class="val-display" id="radiusVal">0.00</div>
-      </div>
-
-      <div class="ctrl-group">
-        <label>Points</label>
-        <input type="range" id="nSlider" min="5" max="40" step="1" value="15">
-        <div class="val-display" id="nVal">15</div>
-      </div>
-
-      <div class="ctrl-group">
-        <label>Seed</label>
-        <input type="range" id="seedSlider" min="0" max="20" step="1" value="0">
-        <div class="val-display" id="seedVal">0</div>
-      </div>
-
-      <div class="stats" id="stats"></div>
-
-      <div class="legend">
-        <div
-          style="margin-bottom:8px; font-size:10px; color:var(--dim); letter-spacing:0.08em; text-transform:uppercase">
-          Toggle layers</div>
-        <div class="toggle-item active" id="tog-rips-h0" data-key="ripsH0">
-          <span style="background:#5b9cf6"></span> Rips H₀
+      <div class="canvases">
+        <div class="canvas-wrap">
+          <div class="canvas-label">Filtration</div>
+          <canvas id="circleCanvas"></canvas>
         </div>
-        <div class="toggle-item active" id="tog-rips-h1" data-key="ripsH1">
-          <span style="background:#f47c7c"></span> Rips H₁
-        </div>
-        <div class="toggle-item" id="tog-cech-h0" data-key="cechH0">
-          <span style="background:#93c5fd"></span> Čech H₀
-        </div>
-        <div class="toggle-item" id="tog-cech-h1" data-key="cechH1">
-          <span style="background:#fca5a5"></span> Čech H₁
-        </div>
-        <div style="margin-top:10px"><span class="alive"></span> Alive at r</div>
-        <div style="margin-top:6px; font-size:10px; line-height:1.6; color:var(--dim)">
-          △/◇ = infinite death<br>
-          dashed lines = current r
+        <div class="canvas-wrap">
+          <div class="canvas-label">Persistence Diagram</div>
+          <canvas id="pdCanvas"></canvas>
         </div>
       </div>
     </div>
 
-    <div class="canvases">
-      <div class="canvas-wrap">
-        <div class="canvas-label">Filtration</div>
-        <canvas id="circleCanvas"></canvas>
-      </div>
-      <div class="canvas-wrap">
-        <div class="canvas-label">Persistence Diagram</div>
-        <canvas id="pdCanvas"></canvas>
-      </div>
-    </div>
-  </div>
+    <script>
+      // ── Seeded RNG (mulberry32) ───────────────────────────────────────────────
+      function mulberry32(seed) {
+        return function () {
+          seed |= 0;
+          seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
 
-  <script>
-    // ── Seeded RNG (mulberry32) ───────────────────────────────────────────────
-    function mulberry32(seed) {
-      return function () {
-        seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      };
-    }
+      // ── Point generators ─────────────────────────────────────────────────────
+      function makePoints(kind, n, seed) {
+        const rng = mulberry32(seed * 1234567 + 42);
+        const pts = [];
 
-    // ── Point generators ─────────────────────────────────────────────────────
-    function makePoints(kind, n, seed) {
-      const rng = mulberry32(seed * 1234567 + 42);
-      const pts = [];
-
-      if (kind === 'random') {
-        for (let i = 0; i < n; i++) pts.push([rng() * 5, rng() * 5]);
-
-      } else if (kind === 'circle') {
-        for (let i = 0; i < n; i++) {
-          const a = (i / n) * 2 * Math.PI;
-          pts.push([2.5 + 2 * Math.cos(a), 2.5 + 2 * Math.sin(a)]);
-        }
-
-      } else if (kind === 'noisy_circle') {
-        for (let i = 0; i < n; i++) {
-          const a = (i / n) * 2 * Math.PI + rng() * 0.3;
-          const noise = randn(rng) * 0.35;
-          pts.push([2.5 + (2 + noise) * Math.cos(a), 2.5 + (2 + noise) * Math.sin(a)]);
-        }
-
-      } else if (kind === 'annulus') {
-        // Uniform random in a ring, r in [1.2, 2.0]
-        for (let i = 0; i < n; i++) {
-          const r = Math.sqrt(rng() * (2.0 ** 2 - 1.2 ** 2) + 1.2 ** 2); // uniform area
-          const a = rng() * 2 * Math.PI;
-          pts.push([2.5 + r * Math.cos(a), 2.5 + r * Math.sin(a)]);
-        }
-
-      } else if (kind === 'two_clusters') {
-        const half = Math.floor(n / 2);
-        for (let i = 0; i < half; i++)
-          pts.push([1.5 + randn(rng) * 0.45, 1.5 + randn(rng) * 0.45]);
-        for (let i = half; i < n; i++)
-          pts.push([3.5 + randn(rng) * 0.45, 3.5 + randn(rng) * 0.45]);
-
-      } else if (kind === 'three_clusters') {
-        const third = Math.floor(n / 3);
-        const centers = [[1.2, 1.2], [3.8, 1.2], [2.5, 4.0]];
-        for (let c = 0; c < 3; c++) {
-          const count = c < 2 ? third : n - 2 * third;
-          for (let i = 0; i < count; i++)
-            pts.push([centers[c][0] + randn(rng) * 0.4, centers[c][1] + randn(rng) * 0.4]);
-        }
-
-      } else if (kind === 'grid') {
-        const side = Math.ceil(Math.sqrt(n));
-        let count = 0;
-        for (let xi = 0; xi < side && count < n; xi++)
-          for (let yi = 0; yi < side && count < n; yi++, count++)
-            pts.push([0.5 + xi * (4 / Math.max(side - 1, 1)), 0.5 + yi * (4 / Math.max(side - 1, 1))]);
-
-      } else if (kind === 'grid_hole') {
-        // Grid with center region removed
-        const side = Math.ceil(Math.sqrt(n * 1.6)); // oversample then filter
-        const all = [];
-        for (let xi = 0; xi < side; xi++)
-          for (let yi = 0; yi < side; yi++) {
-            const x = 0.5 + xi * (4 / Math.max(side - 1, 1));
-            const y = 0.5 + yi * (4 / Math.max(side - 1, 1));
-            const dx = x - 2.5, dy = y - 2.5;
-            if (Math.sqrt(dx * dx + dy * dy) > 1.1) all.push([x, y]);
+        if (kind === "random") {
+          for (let i = 0; i < n; i++) pts.push([rng() * 5, rng() * 5]);
+        } else if (kind === "circle") {
+          for (let i = 0; i < n; i++) {
+            const a = (i / n) * 2 * Math.PI;
+            pts.push([2.5 + 2 * Math.cos(a), 2.5 + 2 * Math.sin(a)]);
           }
-        // shuffle and take n
-        for (let i = all.length - 1; i > 0; i--) {
-          const j = Math.floor(rng() * (i + 1));
-          [all[i], all[j]] = [all[j], all[i]];
-        }
-        for (let i = 0; i < Math.min(n, all.length); i++) pts.push(all[i]);
-
-      } else if (kind === 'figure_eight') {
-        // Lemniscate of Bernoulli: two loops sharing origin, projected to [0,5]
-        for (let i = 0; i < n; i++) {
-          const t = (i / n) * 2 * Math.PI;
-          const scale = Math.cos(t) === -1 ? 0 : 1 / (1 + Math.sin(t) ** 2);
-          const x = Math.cos(t) * scale;
-          const y = Math.sin(t) * Math.cos(t) * scale;
-          pts.push([2.5 + x * 2.0, 2.5 + y * 2.0]);
-        }
-
-      } else if (kind === 'torus') {
-        // Sample surface of torus, project to 2D via (x,y) coords ignoring z
-        // R=major radius, r=tube radius; flatten by taking (theta, phi) -> 2D
-        // Use flat torus: (cos θ, sin θ, cos φ, sin φ) projected to 2D
-        for (let i = 0; i < n; i++) {
-          const theta = rng() * 2 * Math.PI;
-          const phi = rng() * 2 * Math.PI;
-          // Project: use theta for x, phi for y, with slight wobble from the other angle
-          const R = 1.5, r2 = 0.7;
-          const x3 = (R + r2 * Math.cos(phi)) * Math.cos(theta);
-          const y3 = (R + r2 * Math.cos(phi)) * Math.sin(theta);
-          // Map from roughly [-2.2,2.2] to [0.3,4.7]
-          pts.push([2.5 + x3 * 1.05, 2.5 + y3 * 1.05]);
-        }
-
-      } else if (kind === 'spiral') {
-        // Archimedean spiral, 2 turns
-        for (let i = 0; i < n; i++) {
-          const t = (i / (n - 1)) * 4 * Math.PI;
-          const r2 = 0.3 + t / (4 * Math.PI) * 1.9;
-          pts.push([2.5 + r2 * Math.cos(t), 2.5 + r2 * Math.sin(t)]);
-        }
-
-      } else if (kind === 'diagonal') {
-        // Points along y = x with Gaussian noise
-        for (let i = 0; i < n; i++) {
-          const t = 0.5 + (i / (n - 1)) * 4.0;
-          pts.push([t + randn(rng) * 0.18, t + randn(rng) * 0.18]);
-        }
-
-      } else if (kind === 'circle_of_circles') {
-        // 12 small circles arranged on a large circle, like clock hours
-        const numClusters = 6;
-        const bigR = 2.0;   // radius of the outer ring
-        const smallR = 0.2; // radius of each mini-circle
-        const base = Math.floor(n / numClusters);
-        const extra = n % numClusters;
-        for (let c = 0; c < numClusters; c++) {
-          const count = base + (c < extra ? 1 : 0);
-          if (count === 0) continue;
-          // Start at 12 o'clock (-π/2), go clockwise
-          const bigAngle = (c / numClusters) * 2 * Math.PI - Math.PI / 2;
-          const cx = 2.5 + bigR * Math.cos(bigAngle);
-          const cy = 2.5 + bigR * Math.sin(bigAngle);
-          for (let p = 0; p < count; p++) {
-            const smallAngle = (p / count) * 2 * Math.PI;
-            pts.push([cx + smallR * Math.cos(smallAngle), cy + smallR * Math.sin(smallAngle)]);
+        } else if (kind === "noisy_circle") {
+          for (let i = 0; i < n; i++) {
+            const a = (i / n) * 2 * Math.PI + rng() * 0.3;
+            const noise = randn(rng) * 0.35;
+            pts.push([2.5 + (2 + noise) * Math.cos(a), 2.5 + (2 + noise) * Math.sin(a)]);
           }
-        }
-      }
-
-      return pts;
-    }
-
-    function randn(rng) {
-      // Box-Muller
-      return Math.sqrt(-2 * Math.log(rng() + 1e-10)) * Math.cos(2 * Math.PI * rng());
-    }
-
-    // ── Union-Find ────────────────────────────────────────────────────────────
-    function makeUF(n) {
-      const p = Array.from({ length: n }, (_, i) => i);
-      const rank = new Array(n).fill(0);
-      function find(x) {
-        while (p[x] !== x) { p[x] = p[p[x]]; x = p[x]; }
-        return x;
-      }
-      function union(a, b) {
-        a = find(a); b = find(b);
-        if (a === b) return false;
-        if (rank[a] < rank[b]) [a, b] = [b, a];
-        p[b] = a;
-        if (rank[a] === rank[b]) rank[a]++;
-        return true;
-      }
-      return { find, union, p };
-    }
-
-    // ── Circumradius of a triangle ────────────────────────────────────────────
-    function circumradius(p1, p2, p3) {
-      const ax = p1[0], ay = p1[1], bx = p2[0], by = p2[1], cx = p3[0], cy = p3[1];
-      const A = Math.sqrt((bx - ax) ** 2 + (by - ay) ** 2);
-      const B = Math.sqrt((cx - bx) ** 2 + (cy - by) ** 2);
-      const C = Math.sqrt((ax - cx) ** 2 + (ay - cy) ** 2);
-      const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
-      if (area < 1e-12) return Infinity;
-      return (A * B * C) / (4 * area);
-    }
-
-    // ── Core persistence (parameterised by filtration functions) ─────────────
-    function computePersistenceWith(pts, edgeFiltFn, triFiltFn) {
-      const n = pts.length;
-
-      const edges = [];
-      for (let i = 0; i < n; i++)
-        for (let j = i + 1; j < n; j++) {
-          const dx = pts[i][0] - pts[j][0], dy = pts[i][1] - pts[j][1];
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          edges.push([edgeFiltFn(i, j, dist), i, j]);
-        }
-      edges.sort((a, b) => a[0] - b[0]);
-
-      // H0
-      const uf = makeUF(n);
-      const compBirth = new Array(n).fill(0);
-      const h0 = [];
-      for (const [d, i, j] of edges) {
-        const ri = uf.find(i), rj = uf.find(j);
-        if (ri !== rj) {
-          const bi = compBirth[ri], bj = compBirth[rj];
-          h0.push([Math.max(bi, bj), d]);
-          uf.union(i, j);
-          compBirth[uf.find(i)] = Math.min(bi, bj);
-        }
-      }
-      for (let i = 0; i < n; i++)
-        if (uf.find(i) === i) h0.push([compBirth[i], Infinity]);
-
-      // H1
-      const edgeIndex = {};
-      for (let k = 0; k < edges.length; k++) {
-        const [, i, j] = edges[k];
-        edgeIndex[`${Math.min(i, j)}_${Math.max(i, j)}`] = k;
-      }
-
-      const tris = [];
-      for (let i = 0; i < n; i++)
-        for (let j = i + 1; j < n; j++)
-          for (let k = j + 1; k < n; k++) {
-            const ki = `${i}_${j}`, kj = `${i}_${k}`, kk = `${j}_${k}`;
-            if (edgeIndex[ki] !== undefined && edgeIndex[kj] !== undefined && edgeIndex[kk] !== undefined)
-              tris.push([triFiltFn(i, j, k, pts), i, j, k]);
+        } else if (kind === "annulus") {
+          // Uniform random in a ring, r in [1.2, 2.0]
+          for (let i = 0; i < n; i++) {
+            const r = Math.sqrt(rng() * (2.0 ** 2 - 1.2 ** 2) + 1.2 ** 2); // uniform area
+            const a = rng() * 2 * Math.PI;
+            pts.push([2.5 + r * Math.cos(a), 2.5 + r * Math.sin(a)]);
           }
-      tris.sort((a, b) => a[0] - b[0]);
-
-      const cols = [];
-      for (const [, i, j, k] of tris) {
-        const e0 = edgeIndex[`${i}_${j}`], e1 = edgeIndex[`${i}_${k}`], e2 = edgeIndex[`${j}_${k}`];
-        cols.push([e0, e1, e2].sort((a, b) => a - b));
-      }
-
-      const pivotCol = {}, h1 = [];
-      for (let t = 0; t < cols.length; t++) {
-        // reduce cols[t] in place
-        while (cols[t].length > 0) {
-          const lo = cols[t][cols[t].length - 1];
-          if (pivotCol[lo] === undefined) {
-            pivotCol[lo] = t;
-            h1.push([edges[lo][0], tris[t][0]]);
-            break;
-          } else {
-            // XOR with the already-reduced column that owns this pivot
-            const other = cols[pivotCol[lo]];
-            const merged = []; let a = 0, b = 0;
-            while (a < cols[t].length || b < other.length) {
-              const va = a < cols[t].length ? cols[t][a] : Infinity;
-              const vb = b < other.length ? other[b] : Infinity;
-              if (va < vb) { merged.push(va); a++; }
-              else if (vb < va) { merged.push(vb); b++; }
-              else { a++; b++; }
+        } else if (kind === "two_clusters") {
+          const half = Math.floor(n / 2);
+          for (let i = 0; i < half; i++) pts.push([1.5 + randn(rng) * 0.45, 1.5 + randn(rng) * 0.45]);
+          for (let i = half; i < n; i++) pts.push([3.5 + randn(rng) * 0.45, 3.5 + randn(rng) * 0.45]);
+        } else if (kind === "three_clusters") {
+          const third = Math.floor(n / 3);
+          const centers = [
+            [1.2, 1.2],
+            [3.8, 1.2],
+            [2.5, 4.0],
+          ];
+          for (let c = 0; c < 3; c++) {
+            const count = c < 2 ? third : n - 2 * third;
+            for (let i = 0; i < count; i++) pts.push([centers[c][0] + randn(rng) * 0.4, centers[c][1] + randn(rng) * 0.4]);
+          }
+        } else if (kind === "grid") {
+          const side = Math.ceil(Math.sqrt(n));
+          let count = 0;
+          for (let xi = 0; xi < side && count < n; xi++)
+            for (let yi = 0; yi < side && count < n; yi++, count++)
+              pts.push([0.5 + xi * (4 / Math.max(side - 1, 1)), 0.5 + yi * (4 / Math.max(side - 1, 1))]);
+        } else if (kind === "grid_hole") {
+          // Grid with center region removed
+          const side = Math.ceil(Math.sqrt(n * 1.6)); // oversample then filter
+          const all = [];
+          for (let xi = 0; xi < side; xi++)
+            for (let yi = 0; yi < side; yi++) {
+              const x = 0.5 + xi * (4 / Math.max(side - 1, 1));
+              const y = 0.5 + yi * (4 / Math.max(side - 1, 1));
+              const dx = x - 2.5,
+                dy = y - 2.5;
+              if (Math.sqrt(dx * dx + dy * dy) > 1.1) all.push([x, y]);
             }
-            cols[t] = merged;  // update in place so future XORs use reduced column
+          // shuffle and take n
+          for (let i = all.length - 1; i > 0; i--) {
+            const j = Math.floor(rng() * (i + 1));
+            [all[i], all[j]] = [all[j], all[i]];
+          }
+          for (let i = 0; i < Math.min(n, all.length); i++) pts.push(all[i]);
+        } else if (kind === "figure_eight") {
+          // Lemniscate of Bernoulli: two loops sharing origin, projected to [0,5]
+          for (let i = 0; i < n; i++) {
+            const t = (i / n) * 2 * Math.PI;
+            const scale = Math.cos(t) === -1 ? 0 : 1 / (1 + Math.sin(t) ** 2);
+            const x = Math.cos(t) * scale;
+            const y = Math.sin(t) * Math.cos(t) * scale;
+            pts.push([2.5 + x * 2.0, 2.5 + y * 2.0]);
+          }
+        } else if (kind === "torus") {
+          // Sample surface of torus, project to 2D via (x,y) coords ignoring z
+          // R=major radius, r=tube radius; flatten by taking (theta, phi) -> 2D
+          // Use flat torus: (cos θ, sin θ, cos φ, sin φ) projected to 2D
+          for (let i = 0; i < n; i++) {
+            const theta = rng() * 2 * Math.PI;
+            const phi = rng() * 2 * Math.PI;
+            // Project: use theta for x, phi for y, with slight wobble from the other angle
+            const R = 1.5,
+              r2 = 0.7;
+            const x3 = (R + r2 * Math.cos(phi)) * Math.cos(theta);
+            const y3 = (R + r2 * Math.cos(phi)) * Math.sin(theta);
+            // Map from roughly [-2.2,2.2] to [0.3,4.7]
+            pts.push([2.5 + x3 * 1.05, 2.5 + y3 * 1.05]);
+          }
+        } else if (kind === "spiral") {
+          // Archimedean spiral, 2 turns
+          for (let i = 0; i < n; i++) {
+            const t = (i / (n - 1)) * 4 * Math.PI;
+            const r2 = 0.3 + (t / (4 * Math.PI)) * 1.9;
+            pts.push([2.5 + r2 * Math.cos(t), 2.5 + r2 * Math.sin(t)]);
+          }
+        } else if (kind === "diagonal") {
+          // Points along y = x with Gaussian noise
+          for (let i = 0; i < n; i++) {
+            const t = 0.5 + (i / (n - 1)) * 4.0;
+            pts.push([t + randn(rng) * 0.18, t + randn(rng) * 0.18]);
+          }
+        } else if (kind === "circle_of_circles") {
+          // 12 small circles arranged on a large circle, like clock hours
+          const numClusters = 6;
+          const bigR = 2.0; // radius of the outer ring
+          const smallR = 0.2; // radius of each mini-circle
+          const base = Math.floor(n / numClusters);
+          const extra = n % numClusters;
+          for (let c = 0; c < numClusters; c++) {
+            const count = base + (c < extra ? 1 : 0);
+            if (count === 0) continue;
+            // Start at 12 o'clock (-π/2), go clockwise
+            const bigAngle = (c / numClusters) * 2 * Math.PI - Math.PI / 2;
+            const cx = 2.5 + bigR * Math.cos(bigAngle);
+            const cy = 2.5 + bigR * Math.sin(bigAngle);
+            for (let p = 0; p < count; p++) {
+              const smallAngle = (p / count) * 2 * Math.PI;
+              pts.push([cx + smallR * Math.cos(smallAngle), cy + smallR * Math.sin(smallAngle)]);
+            }
           }
         }
-      }
-      return { h0, h1, edges };
-    }
 
-    // ── Vietoris–Rips ─────────────────────────────────────────────────────────
-    // Edge enters at d/2 (radius at which balls first touch), triangle at max-edge/2
-    function computeRips(pts) {
-      return computePersistenceWith(
-        pts,
-        (i, j, d) => d / 2,
-        (i, j, k, pts) => {
-          const d01 = Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]);
-          const d02 = Math.hypot(pts[i][0] - pts[k][0], pts[i][1] - pts[k][1]);
-          const d12 = Math.hypot(pts[j][0] - pts[k][0], pts[j][1] - pts[k][1]);
-          return Math.max(d01, d02, d12) / 2;
+        return pts;
+      }
+
+      function randn(rng) {
+        // Box-Muller
+        return Math.sqrt(-2 * Math.log(rng() + 1e-10)) * Math.cos(2 * Math.PI * rng());
+      }
+
+      // ── Union-Find ────────────────────────────────────────────────────────────
+      function makeUF(n) {
+        const p = Array.from({ length: n }, (_, i) => i);
+        const rank = new Array(n).fill(0);
+        function find(x) {
+          while (p[x] !== x) {
+            p[x] = p[p[x]];
+            x = p[x];
+          }
+          return x;
         }
-      );
-    }
-
-    // ── Čech ──────────────────────────────────────────────────────────────────
-    function computeCech(pts) {
-      return computePersistenceWith(
-        pts,
-        (i, j, d) => d / 2,
-        (i, j, k, pts) => circumradius(pts[i], pts[j], pts[k])
-      );
-    }
-
-    // ── Color palette for components ─────────────────────────────────────────
-    const PALETTE = [
-      '#5b9cf6', '#f47c7c', '#a8e6b0', '#f9c74f', '#c77dff',
-      '#f8961e', '#90e0ef', '#ff99c8', '#b5e48c', '#ffb3c6'
-    ];
-
-    // ── State ─────────────────────────────────────────────────────────────────
-    let pts = [], ripsH0 = [], ripsH1 = [], ripsEdges = [], cechH0 = [], cechH1 = [];
-
-    function recompute() {
-      const kind = document.getElementById('setSelect').value;
-      const n = +document.getElementById('nSlider').value;
-      const seed = +document.getElementById('seedSlider').value;
-      pts = makePoints(kind, n, seed);
-      const rips = computeRips(pts);
-      ripsH0 = rips.h0; ripsH1 = rips.h1; ripsEdges = rips.edges;
-      const cech = computeCech(pts);
-      cechH0 = cech.h0; cechH1 = cech.h1;
-    }
-
-    // ── Drawing ───────────────────────────────────────────────────────────────
-    function hexToRgb(hex) {
-      const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-      return [r, g, b];
-    }
-
-    function drawCircles(canvas, r) {
-      const W = canvas.width, H = canvas.height;
-      const ctx = canvas.getContext('2d');
-      const T = getTheme();
-      ctx.clearRect(0, 0, W, H);
-
-      ctx.fillStyle = T.bg;
-      ctx.fillRect(0, 0, W, H);
-
-      const PAD = 30;
-      const scale = v => (v / 5) * (Math.min(W, H) - 2 * PAD);
-      const sx = x => (x / 5) * (W - 2 * PAD) + PAD;
-      const sy = y => H - (y / 5) * (H - 2 * PAD) - PAD;
-
-      ctx.strokeStyle = T.grid;
-      ctx.lineWidth = 1;
-      for (let g = 0; g <= 5; g++) {
-        const gx = sx(g), gy = sy(g);
-        ctx.beginPath(); ctx.moveTo(gx, PAD); ctx.lineTo(gx, H - PAD); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(PAD, gy); ctx.lineTo(W - PAD, gy); ctx.stroke();
-      }
-
-      const n = pts.length;
-      // Union-Find for current r — ripsEdges filtration value = d/2, active when <= r
-      const uf = makeUF(n);
-      const activeEdges = [];
-      for (const [fv, i, j] of ripsEdges) {
-        if (fv <= r) { uf.union(i, j); activeEdges.push([i, j]); }
-        else break;
-      }
-
-      const compIds = pts.map((_, i) => uf.find(i));
-      const uniqueComps = [...new Set(compIds)].sort();
-      const compColor = {};
-      uniqueComps.forEach((c, k) => compColor[c] = PALETTE[k % PALETTE.length]);
-      const colors = compIds.map(c => compColor[c]);
-
-      const pxr = scale(r);
-
-      // Circles (fill first)
-      for (let i = 0; i < n; i++) {
-        const [r3, g3, b3] = hexToRgb(colors[i]);
-        ctx.beginPath();
-        ctx.arc(sx(pts[i][0]), sy(pts[i][1]), pxr, 0, 2 * Math.PI);
-        ctx.fillStyle = `rgba(${r3},${g3},${b3},0.10)`;
-        ctx.fill();
-      }
-
-      // Edges
-      ctx.lineWidth = 1;
-      for (const [i, j] of activeEdges) {
-        ctx.beginPath();
-        ctx.moveTo(sx(pts[i][0]), sy(pts[i][1]));
-        ctx.lineTo(sx(pts[j][0]), sy(pts[j][1]));
-        ctx.strokeStyle = T.edge;
-        ctx.stroke();
-      }
-
-      // Circle outlines
-      for (let i = 0; i < n; i++) {
-        const [r3, g3, b3] = hexToRgb(colors[i]);
-        ctx.beginPath();
-        ctx.arc(sx(pts[i][0]), sy(pts[i][1]), pxr, 0, 2 * Math.PI);
-        ctx.strokeStyle = `rgba(${r3},${g3},${b3},0.75)`;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
-      // Points
-      for (let i = 0; i < n; i++) {
-        ctx.beginPath();
-        ctx.arc(sx(pts[i][0]), sy(pts[i][1]), 4.5, 0, 2 * Math.PI);
-        ctx.fillStyle = colors[i];
-        ctx.fill();
-        ctx.strokeStyle = T.pointStroke;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
-      // Stats
-      document.getElementById('stats').innerHTML =
-        `<strong>${uniqueComps.length}</strong> component${uniqueComps.length !== 1 ? 's' : ''}<br>` +
-        `<strong>${activeEdges.length}</strong> edges<br>` +
-        `<strong>${ripsH1.filter(([b, d]) => b <= r && (d === Infinity || d > r)).length}</strong> active loop${ripsH1.filter(([b, d]) => b <= r && (d === Infinity || d > r)).length !== 1 ? 's' : ''}`;
-    }
-
-    function drawPD(canvas, r) {
-      const W = canvas.width, H = canvas.height;
-      const ctx = canvas.getContext('2d');
-      const T = getTheme();
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = T.bg;
-      ctx.fillRect(0, 0, W, H);
-
-      const PAD = 36;
-      const allPts = [...ripsH0, ...ripsH1, ...cechH0, ...cechH1];
-      const allFinite = allPts.filter(([b, d]) => d !== Infinity).flatMap(([b, d]) => [b, d]);
-      const allBirths = allPts.map(([b]) => b);
-      const maxVal = Math.max(2.5, ...allFinite, ...allBirths) * 1.1;
-
-      const sx = v => PAD + (v / maxVal) * (W - 2 * PAD);
-      const sy = v => H - PAD - (v / maxVal) * (H - 2 * PAD);
-      const INF_Y = PAD + 10;
-
-      // Grid
-      ctx.strokeStyle = T.grid;
-      ctx.lineWidth = 1;
-      const ticks = 5;
-      for (let t = 0; t <= ticks; t++) {
-        const v = (t / ticks) * maxVal;
-        const gx = sx(v), gy = sy(v);
-        ctx.beginPath(); ctx.moveTo(gx, PAD); ctx.lineTo(gx, H - PAD); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(PAD, gy); ctx.lineTo(W - PAD, gy); ctx.stroke();
-        ctx.fillStyle = T.gridLabel;
-        ctx.font = '9px JetBrains Mono,monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(v.toFixed(1), gx, H - PAD + 12);
-        ctx.textAlign = 'right';
-        ctx.fillText(v.toFixed(1), PAD - 4, gy + 3);
-      }
-
-      // Diagonal
-      ctx.beginPath();
-      ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(maxVal), sy(maxVal));
-      ctx.strokeStyle = T.diagonal; ctx.lineWidth = 1; ctx.stroke();
-
-      // Alive region
-      ctx.fillStyle = T.aliveRegion;
-      ctx.fillRect(PAD, INF_Y, sx(r) - PAD, sy(r) - INF_Y);
-
-      // Crosshairs
-      ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
-      ctx.strokeStyle = T.crosshair;
-      ctx.beginPath(); ctx.moveTo(sx(r), PAD); ctx.lineTo(sx(r), H - PAD); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(PAD, sy(r)); ctx.lineTo(W - PAD, sy(r)); ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Axis labels
-      ctx.fillStyle = T.axisLabel; ctx.font = '10px JetBrains Mono,monospace';
-      ctx.textAlign = 'center'; ctx.fillText('birth', W / 2, H - 2);
-      ctx.save(); ctx.translate(10, H / 2); ctx.rotate(-Math.PI / 2);
-      ctx.fillText('death', 0, 0); ctx.restore();
-      ctx.fillStyle = T.infLabel; ctx.textAlign = 'left';
-      ctx.fillText('∞', PAD + 2, INF_Y + 2);
-
-      // ── Draw points for one filtration ──────────────────────────────────────
-      // shape: 'circle' for Rips, 'diamond' for Čech
-      // H0 color: #5b9cf6 (Rips) / #93c5fd (Čech lighter)
-      // H1 color: #f47c7c (Rips) / #fca5a5 (Čech lighter)
-
-      function drawDot(px, py, alive, fillAlive, fillDim, shape) {
-        const size = alive ? 5 : 3.5;
-        ctx.beginPath();
-        if (shape === 'diamond') {
-          ctx.moveTo(px, py - size * 1.3);
-          ctx.lineTo(px + size * 1.0, py);
-          ctx.lineTo(px, py + size * 1.3);
-          ctx.lineTo(px - size * 1.0, py);
-          ctx.closePath();
-        } else {
-          ctx.arc(px, py, size, 0, 2 * Math.PI);
+        function union(a, b) {
+          a = find(a);
+          b = find(b);
+          if (a === b) return false;
+          if (rank[a] < rank[b]) [a, b] = [b, a];
+          p[b] = a;
+          if (rank[a] === rank[b]) rank[a]++;
+          return true;
         }
-        ctx.fillStyle = alive ? fillAlive : fillDim;
-        ctx.fill();
-        if (alive) { ctx.strokeStyle = T.pointStroke; ctx.lineWidth = 1; ctx.stroke(); }
+        return { find, union, p };
       }
 
-      function drawInfTri(px, alive, fillAlive, fillDim) {
-        ctx.beginPath();
-        ctx.moveTo(px, INF_Y + 8); ctx.lineTo(px - 5, INF_Y + 16); ctx.lineTo(px + 5, INF_Y + 16); ctx.closePath();
-        ctx.fillStyle = alive ? fillAlive : fillDim;
-        ctx.fill();
+      // ── Circumradius of a triangle ────────────────────────────────────────────
+      function circumradius(p1, p2, p3) {
+        const ax = p1[0],
+          ay = p1[1],
+          bx = p2[0],
+          by = p2[1],
+          cx = p3[0],
+          cy = p3[1];
+        const A = Math.sqrt((bx - ax) ** 2 + (by - ay) ** 2);
+        const B = Math.sqrt((cx - bx) ** 2 + (cy - by) ** 2);
+        const C = Math.sqrt((ax - cx) ** 2 + (ay - cy) ** 2);
+        const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+        if (area < 1e-12) return Infinity;
+        return (A * B * C) / (4 * area);
       }
 
-      // Rips H0 (circle)
-      if (visible.ripsH0) for (const [b, d] of ripsH0) {
-        const alive = b <= r && (d === Infinity || d > r);
-        const px = sx(b);
-        if (d === Infinity) drawInfTri(px, alive, '#5b9cf6', 'rgba(91,156,246,0.3)');
-        else drawDot(px, sy(d), alive, '#5b9cf6', 'rgba(91,156,246,0.25)', 'circle');
+      // ── Core persistence (parameterised by filtration functions) ─────────────
+      function computePersistenceWith(pts, edgeFiltFn, triFiltFn) {
+        const n = pts.length;
+
+        const edges = [];
+        for (let i = 0; i < n; i++)
+          for (let j = i + 1; j < n; j++) {
+            const dx = pts[i][0] - pts[j][0],
+              dy = pts[i][1] - pts[j][1];
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            edges.push([edgeFiltFn(i, j, dist), i, j]);
+          }
+        edges.sort((a, b) => a[0] - b[0]);
+
+        // H0
+        const uf = makeUF(n);
+        const compBirth = new Array(n).fill(0);
+        const h0 = [];
+        for (const [d, i, j] of edges) {
+          const ri = uf.find(i),
+            rj = uf.find(j);
+          if (ri !== rj) {
+            const bi = compBirth[ri],
+              bj = compBirth[rj];
+            h0.push([Math.max(bi, bj), d]);
+            uf.union(i, j);
+            compBirth[uf.find(i)] = Math.min(bi, bj);
+          }
+        }
+        for (let i = 0; i < n; i++) if (uf.find(i) === i) h0.push([compBirth[i], Infinity]);
+
+        // H1
+        const edgeIndex = {};
+        for (let k = 0; k < edges.length; k++) {
+          const [, i, j] = edges[k];
+          edgeIndex[`${Math.min(i, j)}_${Math.max(i, j)}`] = k;
+        }
+
+        const tris = [];
+        for (let i = 0; i < n; i++)
+          for (let j = i + 1; j < n; j++)
+            for (let k = j + 1; k < n; k++) {
+              const ki = `${i}_${j}`,
+                kj = `${i}_${k}`,
+                kk = `${j}_${k}`;
+              if (edgeIndex[ki] !== undefined && edgeIndex[kj] !== undefined && edgeIndex[kk] !== undefined)
+                tris.push([triFiltFn(i, j, k, pts), i, j, k]);
+            }
+        tris.sort((a, b) => a[0] - b[0]);
+
+        const cols = [];
+        for (const [, i, j, k] of tris) {
+          const e0 = edgeIndex[`${i}_${j}`],
+            e1 = edgeIndex[`${i}_${k}`],
+            e2 = edgeIndex[`${j}_${k}`];
+          cols.push([e0, e1, e2].sort((a, b) => a - b));
+        }
+
+        const pivotCol = {},
+          h1 = [];
+        for (let t = 0; t < cols.length; t++) {
+          // reduce cols[t] in place
+          while (cols[t].length > 0) {
+            const lo = cols[t][cols[t].length - 1];
+            if (pivotCol[lo] === undefined) {
+              pivotCol[lo] = t;
+              h1.push([edges[lo][0], tris[t][0]]);
+              break;
+            } else {
+              // XOR with the already-reduced column that owns this pivot
+              const other = cols[pivotCol[lo]];
+              const merged = [];
+              let a = 0,
+                b = 0;
+              while (a < cols[t].length || b < other.length) {
+                const va = a < cols[t].length ? cols[t][a] : Infinity;
+                const vb = b < other.length ? other[b] : Infinity;
+                if (va < vb) {
+                  merged.push(va);
+                  a++;
+                } else if (vb < va) {
+                  merged.push(vb);
+                  b++;
+                } else {
+                  a++;
+                  b++;
+                }
+              }
+              cols[t] = merged; // update in place so future XORs use reduced column
+            }
+          }
+        }
+        return { h0, h1, edges };
       }
 
-      // Čech H0 (diamond)
-      if (visible.cechH0) for (const [b, d] of cechH0) {
-        const alive = b <= r && (d === Infinity || d > r);
-        const px = sx(b);
-        if (d === Infinity) {
-          // Small hollow diamond at top
-          const size = 4;
+      // ── Vietoris–Rips ─────────────────────────────────────────────────────────
+      // Edge enters at d/2 (radius at which balls first touch), triangle at max-edge/2
+      function computeRips(pts) {
+        return computePersistenceWith(
+          pts,
+          (i, j, d) => d / 2,
+          (i, j, k, pts) => {
+            const d01 = Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1]);
+            const d02 = Math.hypot(pts[i][0] - pts[k][0], pts[i][1] - pts[k][1]);
+            const d12 = Math.hypot(pts[j][0] - pts[k][0], pts[j][1] - pts[k][1]);
+            return Math.max(d01, d02, d12) / 2;
+          }
+        );
+      }
+
+      // ── Čech ──────────────────────────────────────────────────────────────────
+      function computeCech(pts) {
+        return computePersistenceWith(
+          pts,
+          (i, j, d) => d / 2,
+          (i, j, k, pts) => circumradius(pts[i], pts[j], pts[k])
+        );
+      }
+
+      // ── Color palette for components ─────────────────────────────────────────
+      const PALETTE = ["#5b9cf6", "#f47c7c", "#a8e6b0", "#f9c74f", "#c77dff", "#f8961e", "#90e0ef", "#ff99c8", "#b5e48c", "#ffb3c6"];
+
+      // ── State ─────────────────────────────────────────────────────────────────
+      let pts = [],
+        ripsH0 = [],
+        ripsH1 = [],
+        ripsEdges = [],
+        cechH0 = [],
+        cechH1 = [];
+
+      function recompute() {
+        const kind = document.getElementById("setSelect").value;
+        const n = +document.getElementById("nSlider").value;
+        const seed = +document.getElementById("seedSlider").value;
+        pts = makePoints(kind, n, seed);
+        const rips = computeRips(pts);
+        ripsH0 = rips.h0;
+        ripsH1 = rips.h1;
+        ripsEdges = rips.edges;
+        const cech = computeCech(pts);
+        cechH0 = cech.h0;
+        cechH1 = cech.h1;
+      }
+
+      // ── Drawing ───────────────────────────────────────────────────────────────
+      function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16),
+          g = parseInt(hex.slice(3, 5), 16),
+          b = parseInt(hex.slice(5, 7), 16);
+        return [r, g, b];
+      }
+
+      function drawCircles(canvas, r) {
+        const W = canvas.width,
+          H = canvas.height;
+        const ctx = canvas.getContext("2d");
+        const T = getTheme();
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.fillStyle = T.bg;
+        ctx.fillRect(0, 0, W, H);
+
+        const PAD = 30;
+        const scale = (v) => (v / 5) * (Math.min(W, H) - 2 * PAD);
+        const sx = (x) => (x / 5) * (W - 2 * PAD) + PAD;
+        const sy = (y) => H - (y / 5) * (H - 2 * PAD) - PAD;
+
+        ctx.strokeStyle = T.grid;
+        ctx.lineWidth = 1;
+        for (let g = 0; g <= 5; g++) {
+          const gx = sx(g),
+            gy = sy(g);
           ctx.beginPath();
-          ctx.moveTo(px, INF_Y + 2); ctx.lineTo(px + size, INF_Y + 8);
-          ctx.lineTo(px, INF_Y + 14); ctx.lineTo(px - size, INF_Y + 8); ctx.closePath();
-          ctx.fillStyle = alive ? '#93c5fd' : 'rgba(147,197,253,0.25)'; ctx.fill();
-        } else {
-          drawDot(px, sy(d), alive, '#93c5fd', 'rgba(147,197,253,0.2)', 'diamond');
+          ctx.moveTo(gx, PAD);
+          ctx.lineTo(gx, H - PAD);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(PAD, gy);
+          ctx.lineTo(W - PAD, gy);
+          ctx.stroke();
         }
+
+        const n = pts.length;
+        // Union-Find for current r — ripsEdges filtration value = d/2, active when <= r
+        const uf = makeUF(n);
+        const activeEdges = [];
+        for (const [fv, i, j] of ripsEdges) {
+          if (fv <= r) {
+            uf.union(i, j);
+            activeEdges.push([i, j]);
+          } else break;
+        }
+
+        const compIds = pts.map((_, i) => uf.find(i));
+        const uniqueComps = [...new Set(compIds)].sort();
+        const compColor = {};
+        uniqueComps.forEach((c, k) => (compColor[c] = PALETTE[k % PALETTE.length]));
+        const colors = compIds.map((c) => compColor[c]);
+
+        const pxr = scale(r);
+
+        // Circles (fill first)
+        for (let i = 0; i < n; i++) {
+          const [r3, g3, b3] = hexToRgb(colors[i]);
+          ctx.beginPath();
+          ctx.arc(sx(pts[i][0]), sy(pts[i][1]), pxr, 0, 2 * Math.PI);
+          ctx.fillStyle = `rgba(${r3},${g3},${b3},0.10)`;
+          ctx.fill();
+        }
+
+        // Edges
+        ctx.lineWidth = 1;
+        for (const [i, j] of activeEdges) {
+          ctx.beginPath();
+          ctx.moveTo(sx(pts[i][0]), sy(pts[i][1]));
+          ctx.lineTo(sx(pts[j][0]), sy(pts[j][1]));
+          ctx.strokeStyle = T.edge;
+          ctx.stroke();
+        }
+
+        // Circle outlines
+        for (let i = 0; i < n; i++) {
+          const [r3, g3, b3] = hexToRgb(colors[i]);
+          ctx.beginPath();
+          ctx.arc(sx(pts[i][0]), sy(pts[i][1]), pxr, 0, 2 * Math.PI);
+          ctx.strokeStyle = `rgba(${r3},${g3},${b3},0.75)`;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Points
+        for (let i = 0; i < n; i++) {
+          ctx.beginPath();
+          ctx.arc(sx(pts[i][0]), sy(pts[i][1]), 4.5, 0, 2 * Math.PI);
+          ctx.fillStyle = colors[i];
+          ctx.fill();
+          ctx.strokeStyle = T.pointStroke;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Stats
+        document.getElementById("stats").innerHTML =
+          `<strong>${uniqueComps.length}</strong> component${uniqueComps.length !== 1 ? "s" : ""}<br>` +
+          `<strong>${activeEdges.length}</strong> edges<br>` +
+          `<strong>${ripsH1.filter(([b, d]) => b <= r && (d === Infinity || d > r)).length}</strong> active loop${
+            ripsH1.filter(([b, d]) => b <= r && (d === Infinity || d > r)).length !== 1 ? "s" : ""
+          }`;
       }
 
-      // Rips H1 (circle)
-      if (visible.ripsH1) for (const [b, d] of ripsH1) {
-        const alive = b <= r && (d === Infinity || d > r);
-        drawDot(sx(b), sy(d), alive, '#f47c7c', 'rgba(244,124,124,0.25)', 'circle');
+      function drawPD(canvas, r) {
+        const W = canvas.width,
+          H = canvas.height;
+        const ctx = canvas.getContext("2d");
+        const T = getTheme();
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = T.bg;
+        ctx.fillRect(0, 0, W, H);
+
+        const PAD = 36;
+        const allPts = [...ripsH0, ...ripsH1, ...cechH0, ...cechH1];
+        const allFinite = allPts.filter(([b, d]) => d !== Infinity).flatMap(([b, d]) => [b, d]);
+        const allBirths = allPts.map(([b]) => b);
+        const maxVal = Math.max(2.5, ...allFinite, ...allBirths) * 1.1;
+
+        const sx = (v) => PAD + (v / maxVal) * (W - 2 * PAD);
+        const sy = (v) => H - PAD - (v / maxVal) * (H - 2 * PAD);
+        const INF_Y = PAD + 10;
+
+        // Grid
+        ctx.strokeStyle = T.grid;
+        ctx.lineWidth = 1;
+        const ticks = 5;
+        for (let t = 0; t <= ticks; t++) {
+          const v = (t / ticks) * maxVal;
+          const gx = sx(v),
+            gy = sy(v);
+          ctx.beginPath();
+          ctx.moveTo(gx, PAD);
+          ctx.lineTo(gx, H - PAD);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(PAD, gy);
+          ctx.lineTo(W - PAD, gy);
+          ctx.stroke();
+          ctx.fillStyle = T.gridLabel;
+          ctx.font = "9px JetBrains Mono,monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(v.toFixed(1), gx, H - PAD + 12);
+          ctx.textAlign = "right";
+          ctx.fillText(v.toFixed(1), PAD - 4, gy + 3);
+        }
+
+        // Diagonal
+        ctx.beginPath();
+        ctx.moveTo(sx(0), sy(0));
+        ctx.lineTo(sx(maxVal), sy(maxVal));
+        ctx.strokeStyle = T.diagonal;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Alive region
+        ctx.fillStyle = T.aliveRegion;
+        ctx.fillRect(PAD, INF_Y, sx(r) - PAD, sy(r) - INF_Y);
+
+        // Crosshairs
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = T.crosshair;
+        ctx.beginPath();
+        ctx.moveTo(sx(r), PAD);
+        ctx.lineTo(sx(r), H - PAD);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(PAD, sy(r));
+        ctx.lineTo(W - PAD, sy(r));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Axis labels
+        ctx.fillStyle = T.axisLabel;
+        ctx.font = "10px JetBrains Mono,monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("birth", W / 2, H - 2);
+        ctx.save();
+        ctx.translate(10, H / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("death", 0, 0);
+        ctx.restore();
+        ctx.fillStyle = T.infLabel;
+        ctx.textAlign = "left";
+        ctx.fillText("∞", PAD + 2, INF_Y + 2);
+
+        // ── Draw points for one filtration ──────────────────────────────────────
+        // shape: 'circle' for Rips, 'diamond' for Čech
+        // H0 color: #5b9cf6 (Rips) / #93c5fd (Čech lighter)
+        // H1 color: #f47c7c (Rips) / #fca5a5 (Čech lighter)
+
+        function drawDot(px, py, alive, fillAlive, fillDim, shape) {
+          const size = alive ? 5 : 3.5;
+          ctx.beginPath();
+          if (shape === "diamond") {
+            ctx.moveTo(px, py - size * 1.3);
+            ctx.lineTo(px + size * 1.0, py);
+            ctx.lineTo(px, py + size * 1.3);
+            ctx.lineTo(px - size * 1.0, py);
+            ctx.closePath();
+          } else {
+            ctx.arc(px, py, size, 0, 2 * Math.PI);
+          }
+          ctx.fillStyle = alive ? fillAlive : fillDim;
+          ctx.fill();
+          if (alive) {
+            ctx.strokeStyle = T.pointStroke;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+        function drawInfTri(px, alive, fillAlive, fillDim) {
+          ctx.beginPath();
+          ctx.moveTo(px, INF_Y + 8);
+          ctx.lineTo(px - 5, INF_Y + 16);
+          ctx.lineTo(px + 5, INF_Y + 16);
+          ctx.closePath();
+          ctx.fillStyle = alive ? fillAlive : fillDim;
+          ctx.fill();
+        }
+
+        // Rips H0 (circle)
+        if (visible.ripsH0)
+          for (const [b, d] of ripsH0) {
+            const alive = b <= r && (d === Infinity || d > r);
+            const px = sx(b);
+            if (d === Infinity) drawInfTri(px, alive, "#5b9cf6", "rgba(91,156,246,0.3)");
+            else drawDot(px, sy(d), alive, "#5b9cf6", "rgba(91,156,246,0.25)", "circle");
+          }
+
+        // Čech H0 (diamond)
+        if (visible.cechH0)
+          for (const [b, d] of cechH0) {
+            const alive = b <= r && (d === Infinity || d > r);
+            const px = sx(b);
+            if (d === Infinity) {
+              // Small hollow diamond at top
+              const size = 4;
+              ctx.beginPath();
+              ctx.moveTo(px, INF_Y + 2);
+              ctx.lineTo(px + size, INF_Y + 8);
+              ctx.lineTo(px, INF_Y + 14);
+              ctx.lineTo(px - size, INF_Y + 8);
+              ctx.closePath();
+              ctx.fillStyle = alive ? "#93c5fd" : "rgba(147,197,253,0.25)";
+              ctx.fill();
+            } else {
+              drawDot(px, sy(d), alive, "#93c5fd", "rgba(147,197,253,0.2)", "diamond");
+            }
+          }
+
+        // Rips H1 (circle)
+        if (visible.ripsH1)
+          for (const [b, d] of ripsH1) {
+            const alive = b <= r && (d === Infinity || d > r);
+            drawDot(sx(b), sy(d), alive, "#f47c7c", "rgba(244,124,124,0.25)", "circle");
+          }
+
+        // Čech H1 (diamond)
+        if (visible.cechH1)
+          for (const [b, d] of cechH1) {
+            const alive = b <= r && (d === Infinity || d > r);
+            drawDot(sx(b), sy(d), alive, "#fca5a5", "rgba(252,165,165,0.2)", "diamond");
+          }
       }
 
-      // Čech H1 (diamond)
-      if (visible.cechH1) for (const [b, d] of cechH1) {
-        const alive = b <= r && (d === Infinity || d > r);
-        drawDot(sx(b), sy(d), alive, '#fca5a5', 'rgba(252,165,165,0.2)', 'diamond');
+      // ── Theme ─────────────────────────────────────────────────────────────────
+      const THEMES = {
+        dark: {
+          bg: "#14151a",
+          grid: "rgba(42,43,53,0.8)",
+          diagonal: "rgba(90,92,110,0.5)",
+          edge: "rgba(140,142,160,0.45)",
+          gridLabel: "#3a3c4e",
+          axisLabel: "#5a5c6e",
+          infLabel: "#3a3c4e",
+          crosshair: "rgba(168,230,176,0.4)",
+          aliveRegion: "rgba(168,230,176,0.05)",
+          pointStroke: "#0e0f13",
+        },
+        light: {
+          bg: "#faf9f6",
+          grid: "rgba(200,196,188,0.7)",
+          diagonal: "rgba(160,155,140,0.5)",
+          edge: "rgba(100,95,85,0.35)",
+          gridLabel: "#aaa89e",
+          axisLabel: "#8a8678",
+          infLabel: "#aaa89e",
+          crosshair: "rgba(22,163,74,0.5)",
+          aliveRegion: "rgba(22,163,74,0.06)",
+          pointStroke: "#faf9f6",
+        },
+      };
+      function getTheme() {
+        return document.documentElement.dataset.theme === "light" ? THEMES.light : THEMES.dark;
       }
-    }
 
-    // ── Theme ─────────────────────────────────────────────────────────────────
-    const THEMES = {
-      dark: {
-        bg: '#14151a', grid: 'rgba(42,43,53,0.8)', diagonal: 'rgba(90,92,110,0.5)',
-        edge: 'rgba(140,142,160,0.45)', gridLabel: '#3a3c4e', axisLabel: '#5a5c6e',
-        infLabel: '#3a3c4e', crosshair: 'rgba(168,230,176,0.4)', aliveRegion: 'rgba(168,230,176,0.05)',
-        pointStroke: '#0e0f13',
-      },
-      light: {
-        bg: '#faf9f6', grid: 'rgba(200,196,188,0.7)', diagonal: 'rgba(160,155,140,0.5)',
-        edge: 'rgba(100,95,85,0.35)', gridLabel: '#aaa89e', axisLabel: '#8a8678',
-        infLabel: '#aaa89e', crosshair: 'rgba(22,163,74,0.5)', aliveRegion: 'rgba(22,163,74,0.06)',
-        pointStroke: '#faf9f6',
-      },
-    };
-    function getTheme() {
-      return document.documentElement.dataset.theme === 'light' ? THEMES.light : THEMES.dark;
-    }
+      document.getElementById("themeToggle").addEventListener("click", function () {
+        const isLight = document.documentElement.dataset.theme === "light";
+        document.documentElement.dataset.theme = isLight ? "dark" : "light";
+        this.textContent = isLight ? "☀ light" : "☾ dark";
+        redraw();
+      });
 
-    document.getElementById('themeToggle').addEventListener('click', function () {
-      const isLight = document.documentElement.dataset.theme === 'light';
-      document.documentElement.dataset.theme = isLight ? 'dark' : 'light';
-      this.textContent = isLight ? '☀ light' : '☾ dark';
+      const visible = { ripsH0: true, ripsH1: true, cechH0: false, cechH1: false };
+
+      document.querySelectorAll(".toggle-item").forEach((el) => {
+        el.addEventListener("click", () => {
+          const key = el.dataset.key;
+          visible[key] = !visible[key];
+          el.classList.toggle("active", visible[key]);
+          drawPD(document.getElementById("pdCanvas"), +document.getElementById("radiusSlider").value);
+        });
+      });
+
+      function sizeCanvases() {
+        const cc = document.getElementById("circleCanvas");
+        const pc = document.getElementById("pdCanvas");
+        const wrap = cc.parentElement;
+        const W = wrap.clientWidth - 24,
+          H = wrap.clientHeight - 24;
+        const S = Math.min(W, H, 520);
+        cc.width = S;
+        cc.height = S;
+        pc.width = S;
+        pc.height = S;
+      }
+
+      function redraw() {
+        const r = +document.getElementById("radiusSlider").value;
+        sizeCanvases();
+        drawCircles(document.getElementById("circleCanvas"), r);
+        drawPD(document.getElementById("pdCanvas"), r);
+      }
+
+      // ── Event wiring ──────────────────────────────────────────────────────────
+      document.getElementById("radiusSlider").addEventListener("input", function () {
+        document.getElementById("radiusVal").textContent = parseFloat(this.value).toFixed(2);
+        const r = +this.value;
+        drawCircles(document.getElementById("circleCanvas"), r);
+        drawPD(document.getElementById("pdCanvas"), r);
+      });
+
+      ["nSlider", "seedSlider"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", function () {
+          document.getElementById(id.replace("Slider", "Val")).textContent = this.value;
+          recompute();
+          redraw();
+        });
+      });
+
+      document.getElementById("setSelect").addEventListener("change", () => {
+        recompute();
+        redraw();
+      });
+
+      window.addEventListener("resize", redraw);
+
+      // Init
+      recompute();
+      document.getElementById("radiusVal").textContent = parseFloat(document.getElementById("radiusSlider").value).toFixed(2);
       redraw();
-    });
-
-
-    const visible = { ripsH0: true, ripsH1: true, cechH0: false, cechH1: false };
-
-    document.querySelectorAll('.toggle-item').forEach(el => {
-      el.addEventListener('click', () => {
-        const key = el.dataset.key;
-        visible[key] = !visible[key];
-        el.classList.toggle('active', visible[key]);
-        drawPD(document.getElementById('pdCanvas'), +document.getElementById('radiusSlider').value);
-      });
-    });
-
-
-    function sizeCanvases() {
-      const cc = document.getElementById('circleCanvas');
-      const pc = document.getElementById('pdCanvas');
-      const wrap = cc.parentElement;
-      const W = wrap.clientWidth - 24, H = wrap.clientHeight - 24;
-      const S = Math.min(W, H, 520);
-      cc.width = S; cc.height = S;
-      pc.width = S; pc.height = S;
-    }
-
-    function redraw() {
-      const r = +document.getElementById('radiusSlider').value;
-      sizeCanvases();
-      drawCircles(document.getElementById('circleCanvas'), r);
-      drawPD(document.getElementById('pdCanvas'), r);
-    }
-
-    // ── Event wiring ──────────────────────────────────────────────────────────
-    document.getElementById('radiusSlider').addEventListener('input', function () {
-      document.getElementById('radiusVal').textContent = parseFloat(this.value).toFixed(2);
-      const r = +this.value;
-      drawCircles(document.getElementById('circleCanvas'), r);
-      drawPD(document.getElementById('pdCanvas'), r);
-    });
-
-    ['nSlider', 'seedSlider'].forEach(id => {
-      document.getElementById(id).addEventListener('input', function () {
-        document.getElementById(id.replace('Slider', 'Val')).textContent = this.value;
-        recompute(); redraw();
-      });
-    });
-
-    document.getElementById('setSelect').addEventListener('change', () => { recompute(); redraw(); });
-
-    window.addEventListener('resize', redraw);
-
-    // Init
-    recompute();
-    document.getElementById('radiusVal').textContent = parseFloat(document.getElementById('radiusSlider').value).toFixed(2);
-    redraw();
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

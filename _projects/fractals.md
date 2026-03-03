@@ -7,6 +7,7 @@ importance: 9
 category: tda
 related_publications: true
 ---
+
 <div class="text-center">
 {% include figure.liquid path="assets/img/PL_H0Cantor.png" caption="Persistence landscapes of the first few iterations of the Cantor set IFS, converging to the landscape of the limit fractal." zoomable=true width="60%" %}
 </div>
@@ -28,7 +29,7 @@ This project answers that question affirmatively for persistence landscapes. We
 show that for an affine IFS, there is an affine transformation on the space of
 persistence landscapes that intertwines the action of the IFS. In other words,
 the persistence landscape of the fractal satisfies a fixed-point equation of its
-own. Thus, in a precise sense, the persistence landscape of a fractal is a 
+own. Thus, in a precise sense, the persistence landscape of a fractal is a
 fractal in the space of landscapes.
 Rather than computing the
 landscape of the fractal directly (which would require an infinite iteration),

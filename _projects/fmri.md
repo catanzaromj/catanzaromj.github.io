@@ -15,7 +15,7 @@ can miss the fine-grained spatial structure of how regions activate.
 
 This project applies topological data analysis to fMRI data using the natural geometry
 that the voxel grid provides. Each brain region of interest is modeled as a
-*cubical complex*, a topological space built from cubes rather than triangles. Cubical complexes are amenable to efficient homological calculations and 
+_cubical complex_, a topological space built from cubes rather than triangles. Cubical complexes are amenable to efficient homological calculations and
 are well-adapted to the rectangular grid of voxels. The fMRI BOLD signal then induces a
 filtration on this complex: at each threshold value, we include all voxels whose signal
 exceeds that value. Running persistent homology on this filtration yields a persistence

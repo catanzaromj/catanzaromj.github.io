@@ -33,22 +33,21 @@ As $$r$$ grows, two things happen:
 1. Balls overlap. When two balls first touch, we draw an edge between the corresponding points.
 2. Edges form triangles. When three points are all mutually connected, we fill in a triangle.
 
-This growing process is called the Vietoris-Rips *filtration*. At each value of
+This growing process is called the Vietoris-Rips _filtration_. At each value of
 $$r$$, we have a combinatorial object (a simplicial complex) that approximates
 the shape of the data at that scale.
 
 By topological features, we mean connected components, loops, voids, and higher
-dimensional analogues.  As $$r$$ increases, these features can appear and
+dimensional analogues. As $$r$$ increases, these features can appear and
 disappear. A connected component is born when a point first appears (always at
 $$r = 0$$) and dies when it merges with another component. A loop is born when a
 ring of edges closes up, and dies when the interior fills with triangles.
 
 ## Persistence diagrams
 
-For each feature we record two numbers: the radius at which it was *born* and
-the radius at which it *died*. Plot birth on the $$x$$-axis, death on the
-$$y$$-axis. Altogether, these form a *persistence diagram*.
-
+For each feature we record two numbers: the radius at which it was _born_ and
+the radius at which it _died_. Plot birth on the $$x$$-axis, death on the
+$$y$$-axis. Altogether, these form a _persistence diagram_.
 
 Every point lies above the diagonal, since death always follows birth. Note
 though that due to computational artifacts, some software packages may produce points
@@ -58,7 +57,7 @@ over which a feature survives.
 
 It is tempting to read long-lived features as "signal" and short-lived ones as
 "noise." This is often done in many tutorials on persistence, and there are lots of
-example cases in which this is true. This framing might even come from the stability 
+example cases in which this is true. This framing might even come from the stability
 theorem, which guarantees that
 small perturbations to the data move points in the diagram by at most the same
 amount. But stability and significance are different things. Short-lived
@@ -73,7 +72,7 @@ application cares about.
 
 ## Try it out
 
-The best way to build intuition is to interact with the filtration directly. 
+The best way to build intuition is to interact with the filtration directly.
 The Persistent Homology Explorer tool allows you to mess around with persistence
 for a variety of small toy datasets. You can pick a datapoint set, drag the
 radius slider, and watch how features appear in the diagram as $$r$$ grows.
@@ -97,7 +96,7 @@ See if you can localize or identify where in the data each feature is coming fro
 ## Circle of circles
 
 One of the best features of persistent homology is its **multiscale** nature. Varying the radius
-$$r$$ allows us to study several scales simultaneously without any practitioner input. 
+$$r$$ allows us to study several scales simultaneously without any practitioner input.
 
 Take for example a circle of circles. Imagine six circles arranged at the even hours on the face of a
 clock.
@@ -126,10 +125,8 @@ just a single lump of points.
   </figure>
 </div>
 
-
 Persistent homology is what makes this kind of "zooming out" analysis precise. All of the above
 information can be read off from the persistence diagram in a rigorous fashion.
-
 
 ## Vietoris–Rips and Čech
 
@@ -154,4 +151,3 @@ produce similar diagrams, which is what makes them useful as features in
 downstream ML tasks. The utility here comes from the full multi-scale
 picture, not from filtering it or thresholding it arbitrarily down to the longest
 lived features.
-

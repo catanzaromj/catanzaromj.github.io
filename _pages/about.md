@@ -38,11 +38,10 @@ fractal geometry. Once upon a time, I studied stochastic topology and empirical
 currents as they arise in physics and statistical mechanics.
 
 Previously,
-I was an Assistant Professor at Iowa State University and 
+I was an Assistant Professor at Iowa State University and
 a postdoc at the University of Florida.
 I earned my PhD in 2016 under the supervision of [John Klein](http://www.klein.wayne.edu/)
 and [Vladimir Chernyak](https://clasprofiles.wayne.edu/profile/av3651) and
 was mentored by [Peter Bubenik](https://people.clas.ufl.edu/peterbubenik/) as a postdoc.
 
 I like to do lots of other things besides machine learning, math, and physics.
-

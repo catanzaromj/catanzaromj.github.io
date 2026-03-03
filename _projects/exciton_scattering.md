@@ -15,13 +15,13 @@ organic semiconductors, and photovoltaic devices, so counting how many distinct
 excitations a system can support is a question of real physical interest.
 
 Our work applies algebraic topology to study and in particular, to count, the
-number of such excitations in certain systems.  The exciton counting problem has
+number of such excitations in certain systems. The exciton counting problem has
 a clean topological formulation in terms of intersection theory. The electronic
 Hamiltonian of a molecular system traces out a curve in the space of $$n \times
 n$$ unitary matrices $$U(n)$$. Excitons correspond to intersections of this
 curve with a particular stratified subspace--the set of matrices with at least
 one eigenvalue equal to one. Each intersection carries a multiplicity, and the
-total exciton count is a *topological winding number* computable via an
+total exciton count is a _topological winding number_ computable via an
 index-like theorem. Because the answer depends only on the topology of the curve
 and the stratification, it is robust to small perturbations of the system.
 

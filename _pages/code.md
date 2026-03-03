@@ -29,7 +29,7 @@ nav_order: 2
 
 This is a tool for understanding Vietoris-Rips and Cech persistent
 homology. Change the dataset, number of points, and the radius while
-watching everything update live. 
+watching everything update live.
 
 <div style="margin: 2em 0;">
   <a href="/assets/html/persistence_explorer.html" target="_blank" style="font-family: monospace;">
@@ -41,14 +41,13 @@ watching everything update live.
 
 A plotly visualization for understanding higher dimensional random walks
 on CW complexes. This particular example shows a one-dimensional walk
-on a CW decomposition of a torus. 
+on a CW decomposition of a torus.
 
 <div style="margin: 2em 0;">
   <a href="/assets/html/Torus_walk_slider.html" target="_blank" style="font-family: monospace;">
     Torus random walk
   </a>
 </div>
-
 
 ## Open source code
 

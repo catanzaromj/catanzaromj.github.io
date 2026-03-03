@@ -9,17 +9,17 @@ related_publications: true
 ---
 
 In a graph, an **electrical current** is a flow along edges that satisfies
-Kirchhoff's laws. Think of an electron moving through a wire. 
-The flow can be deterministic or stochastic, and so random walks on graphs 
+Kirchhoff's laws. Think of an electron moving through a wire.
+The flow can be deterministic or stochastic, and so random walks on graphs
 generate currents. In this case, the current encodes topological properties of the
-graph and can be studied under various dynamical limits. We think of current as 
+graph and can be studied under various dynamical limits. We think of current as
 a statistical object encoding how much net flow passes through each edge. This
 relationship between probability and topology is classical and well understood
 in dimension one.
 
 My thesis generalizes this to **higher dimensions** {% cite
-catanzaro_topological_2016 %}.  Instead of measuring flow along edges (1-dimensional objects) in a
-graph, we consider flow along higher-dimensional sub-objects, like embedded surfaces or volumes. We study these questions in both CW complexes and smooth manifolds. 
+catanzaro_topological_2016 %}. Instead of measuring flow along edges (1-dimensional objects) in a
+graph, we consider flow along higher-dimensional sub-objects, like embedded surfaces or volumes. We study these questions in both CW complexes and smooth manifolds.
 In either case, A stochastic process can be defined, whether it is a Markov chain or a stochastic
 differential equation. Instead of thinking about points moving around the graph, we
 again generalize to moving higher-dimensional or extended objects around. These objects moving similarly generate a **higher current**, and
@@ -28,10 +28,10 @@ the central question is: what topological information does this current carry?
 The project splits into two parallel settings and the tools involved vary for each:
 
 - **Discrete case** (CW complexes with Markov processes): Under dynamical limits on
-the Markov process, the motion of the embedded object tends to be supported along
-*higher spanning trees*, the analog of a spanning tree on a graph. These higher
-spanning trees can be enumerated using **Reidemeister torsion**,
-  an invariant from Algebraic K-theory. 
+  the Markov process, the motion of the embedded object tends to be supported along
+  _higher spanning trees_, the analog of a spanning tree on a graph. These higher
+  spanning trees can be enumerated using **Reidemeister torsion**,
+  an invariant from Algebraic K-theory.
   The combinatorial complexity here is much richer than the graph case and is
   analyzed in {% cite catanzaro_kirchhoffs_2015 %}.
 
@@ -55,4 +55,3 @@ of hypercurrents is pursued in {% cite catanzaro_hypercurrents_2020 %}.
 initial condition is also shown later during evolution (back left). 
 While the evolved cycle may become more complicated, it is always homologous to the initial cycle throughout the process." zoomable=true width="60%" %}
 </div>
-
