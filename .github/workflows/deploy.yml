@@ -73,6 +73,9 @@ jobs:
           valueFile: "_config.yml"
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
+      - name: Install ImageMagick with WebP support
+        run: sudo apt-get install -y imagemagick webp
+
       - name: Install and Build 🔧
         run: |
           pip3 install --upgrade jupyter
