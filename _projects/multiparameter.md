@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Multiparameter Persistence
+title: Multi-parameter Persistence
 description: Geometric models for multiparameter persistent homology via generic families of Morse functions.
 img: assets/img/multip_bar.png
 importance: 6
