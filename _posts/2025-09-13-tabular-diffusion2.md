@@ -1,0 +1,205 @@
+---
+layout: post
+title: "Tabular Diffusion in Practice: Variance Schedules, Time Embeddings, and EMA"
+date: 2025-09-13
+description: A closer look at the implementation choices that matter when training a diffusion model on tabular data.
+tags: [diffusion-models, generative-models, tabular-data, machine-learning]
+categories: [ml]
+---
+
+This post assumes familiarity with the basics of denoising diffusion.
+If you want a primer first, see [my earlier post]({% post_url 2025-05-06-tabular-diffusion %}).
+
+Here I want to get into the details that I found matter in practice.
+These include how you schedule noise, how the network knows where it is in the diffusion process, how you stabilize training,
+and how you steer samples toward valid outputs at inference time. Most of what I write here are things that I found out
+through experience, not necessarily in literature.
+
+## Our project
+
+The project we were working on consisted of roughly 50,000 data points of tabular data. Each data point consisted
+of 21 numerical values, some unitless and some with units on very different scales. There were roughly 30 equations
+which constrained the values in each row. So while the first column may have had a range of possible values
+of say $$-10$$ to $$10$$, there were additional constraints on it involving the other columns. While our
+intention was not to have the de-noising model learn all of these relationships explicitly, it tended to do so
+in practice.
+
+## Variance schedules
+
+The variance schedule $$\{\beta_t\}$$ determines how noise accumulates
+over the forward process. I found this choice to have a huge impact on
+how much signal remains at intermediate timesteps and how hard the reverse
+process is to learn.
+
+We'll get to the individual variance schedules below. But regardless of which
+form of $$\beta_t$$ you choose, an important quantity to track is the _cumulative product_
+$$\bar{\alpha}(t) = \prod_{s=1}^{t}(1 - \beta_s)$$.
+
+With this quantity, you can re-write the forward process in closed form directly
+from $$x_0$$:
+
+$$
+q(x_t \mid x_0) = \mathcal{N}(x_t;\sqrt{\bar{\alpha}_t}x_0,
+(1 - \bar{\alpha}_t) I)
+$$
+
+Now the variance term with $$(1 - \bar{\alpha}_t)I$$ makes explicit the signal
+to noise ratio at each time step. We see that $$\bar{\alpha}_t$$ is essentially
+the signal retention over time. Plotting this as a function of $$t$$ can help
+us tweak and understand the diffusion model's performance.
+
+We considered linear, quadratic, and cosine based schedules for variance.
+A linear schedule looks something like
+
+$$
+\beta_t = \beta_{\min} + \frac{t-1}{T-1}(\beta_{\max} - \beta_{\min})
+$$
+
+with typical values $$\beta_{\min} = 10^{-4}$$, $$\beta_{\max} =
+0.02$$, and $$T = 1000$$. You can imagine what a quadratic schedule looks
+like based on this.
+
+A cosine schedule typically takes the form
+
+$$
+\bar{\alpha}_t = \frac{f(t)}{f(0)}, \qquad f(t) =
+  \cos\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)^2
+$$
+
+where $$s \approx 0.008$$ is a small offset to keep $\beta_t$ from
+being too small near $t = 0$. Then $\beta_t = 1 - \bar{\alpha}t /
+  \bar{\alpha}{t-1}$.
+
+Plotting $$\bar{\alpha}_t$$ makes the differences between these three cases concrete:
+
+<div id="alpha-bar-plot" style="width:100%; height:400px;"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% raw %}
+<script>
+(function() {
+  const T = 1000;
+  const betaMin = 0.0001;
+  const betaMax = 0.02;
+  const s = 0.008;
+
+const t = Array.from({length: T}, (\_, i) => i + 1);
+
+const betaLinear = t.map(i => betaMin + (i - 1) / (T - 1) _ (betaMax - betaMin));
+const betaQuad = t.map(i => betaMin + Math.pow((i - 1) / (T - 1), 2) _ (betaMax - betaMin));
+
+function alphaBar(betas) {
+const out = [];
+let prod = 1;
+for (const b of betas) { prod \*= (1 - b); out.push(prod); }
+return out;
+}
+
+const f0 = Math.pow(Math.cos((s / (1 + s)) _ Math.PI / 2), 2);
+const abCosine = t.map(i => {
+const fi = Math.pow(Math.cos(((i / T) + s) / (1 + s) _ Math.PI / 2), 2);
+return fi / f0;
+});
+
+const traces = [
+{ x: t, y: alphaBar(betaLinear), name: 'Linear', mode: 'lines' },
+{ x: t, y: alphaBar(betaQuad), name: 'Quadratic', mode: 'lines' },
+{ x: t, y: abCosine, name: 'Cosine', mode: 'lines' },
+];
+
+const layout = {
+xaxis: { title: 't' },
+yaxis: { title: 'ᾱ_t (signal retention)', range: [0, 1] },
+legend: { orientation: 'h', y: -0.2 },
+margin: { t: 20 },
+};
+
+Plotly.newPlot('alpha-bar-plot', traces, layout, { responsive: true });
+})();
+</script>
+{% endraw %}
+
+The cosine schedule keeps this higher for longer
+before dropping off, which is why it tends to produce better
+samples.
+
+Our choice was motivated by our results--we tried lots of different variance schedules
+and found linear worked best. We believe it was in part because we quantile normalized our data.
+This puts all the features on similar scales with similar distributions. Other than
+it worked best, I don't have a great explanation.
+
+## Time embeddings
+
+The network needs to know which timestep $$t$$ it is operating at. In particular, the noise
+behavior changes as a function of $$t$$ and so the network needs
+to have some internal state of this. Denoising at $$t=1$$ with tiny
+noise is very different than at $$t=1000$$ which is pure noise. The model needs to be able to
+adapt its denoising behavior to how noisy the input is. This seems like a
+trivial task--just give it the time parameter $$t$$ with the current noised
+data point $$x_t$$. But neural networks work with respect to arrays and tensors,
+not integers. So instead we embed time into the network via a sinusoidal embedding,
+analogous to positional encodings in transformers.
+
+First, we define the fundamental "frequencies"
+
+$$
+\omega_k = \exp!\left(-\frac{k \ln(P)}{\lfloor d/2 \rfloor}\right),
+ \qquad k = 0, 1, \ldots, \lfloor d/2 \rfloor - 1
+$$
+
+Then we can define the formal embedding by concatenating cosine and sine halves
+
+$$
+\text{emb}(t) = \bigl[\cos(a_{t,0}),\ \ldots,\ \cos(a_{t,\lfloor
+d/2\rfloor-1}),\ \sin(a_{t,0}),\ \ldots,\ \sin(a_{t,\lfloor
+d/2\rfloor-1})\bigr]
+$$
+
+where the arguments are defined as (outer product of timesteps and frequencies):
+
+$$
+a_{t,k} = t \cdot \omega_k
+$$
+
+where $$d = 128$$, the embedding dimension and $$P$$ is the maximum period. Note
+that our implementation puts cosine first, then sine, which is the opposite of
+the transformer convention, but functionally equivalent.
+
+The embedding is projected and injected into the network with a residual connection to inject
+this information early on and again at the end. Our network was a
+
+<!-- TODO: describe your architecture — MLP? How many layers? How was the time embedding injected? -->
+<!-- TODO: was there anything about the tabular input structure that affected how you handled time embeddings? -->
+
+## Exponential moving average
+
+During training, model weights are updated via gradient descent as usual. EMA maintains a separate shadow copy of the weights as a running average:
+
+$$
+\theta_{\text{ema}} \leftarrow \mu \cdot \theta_{\text{ema}} + (1 - \mu) \cdot \theta
+$$
+
+where $$\mu$$ is the decay rate (typically 0.999 or 0.9999). The EMA weights are not used during training — only at inference.
+
+The intuition is that the EMA weights average out gradient noise and tend to sit in flatter regions of the loss landscape. For tabular data, where training sets can be small relative to image benchmarks, this stabilization matters more than you might expect.
+
+<!-- TODO: what decay rate did you use, and how did you choose it? -->
+<!-- TODO: how much did EMA matter in your experiments? Was the gap between EMA and non-EMA samples noticeable on your evaluation metrics? -->
+
+## Guidance at inference
+
+A guidance function steers the denoising trajectory toward outputs that satisfy some external criterion — without retraining the diffusion model. At each reverse step, the gradient of a guidance signal with respect to $$x_t$$ nudges the predicted mean:
+
+$$
+\tilde{\mu}_\theta(x_t, t) = \mu_\theta(x_t, t) + s \cdot \Sigma_\theta(x_t, t) \nabla_{x_t} \log p(y \mid x_t)
+$$
+
+where $$s$$ is a guidance scale and $$p(y \mid x_t)$$ scores how plausible or valid a noisy sample is.
+
+<!-- TODO: describe what your guidance function was targeting — what made a generated row valid in your domain? -->
+<!-- TODO: how did you implement p(y | x_t)? A classifier trained on noisy inputs? A domain constraint function? -->
+<!-- TODO: how did you choose the guidance scale s, and how sensitive were results to it? -->
+<!-- TODO: add a note on training the guidance model -->
+
+## Further reading
+
+<!-- TODO: add any references beyond those in the first post -->
