@@ -132,7 +132,7 @@ The cosine schedule keeps this higher for longer
 before dropping off, which is why it tends to produce better
 samples.
 
-Our choice was motivated by our results--we tried lots of different variance schedules
+Our choice was motivated by our results — we tried lots of different variance schedules
 and found linear worked best. We believe it was in part because we also quantile normalized our data.
 This puts all the features on similar scales with similar distributions.
 We determined "best" by lots of trial and error, and validating the outputs. Because
@@ -179,8 +179,6 @@ the transformer convention, but functionally equivalent.
 The embedding is projected and injected into the network with a residual connection to inject
 this information early on and again at the end. Our network was a
 
-<!-- TODO: describe your architecture — MLP? How many layers? How was the time embedding injected? -->
-<!-- TODO: was there anything about the tabular input structure that affected how you handled time embeddings? -->
 
 ## Exponential moving average
 
@@ -219,11 +217,11 @@ interest for each produced sample, trained on the initial training set. With the
 the mean for the sampling process becomes
 
 $$
-\tilde{\mu}_\theta(x_t, t) = \mu_\theta(x_t, t) + s \cdot \Sigma_\theta(x_t, t) \nabla_{x_t} \log p(y \mid x_t) - 
+\tilde{\mu}_\theta(x_t, t) = \mu_\theta(x_t, t) + s \cdot \Sigma_\theta(x_t, t) \nabla_{x_t} \log p(y \mid x_t) -
 \sum_i \lambda_i \nabla_{x_t} f_{\phi_i}(x_t)
 $$
 
-where $$f_{\phi_i}$$ are the auxiliary guidance functions. By tuning the $$\lambda_i$$ parameters, we can 
+where $$f_{\phi_i}$$ are the auxiliary guidance functions. By tuning the $$\lambda_i$$ parameters, we can
 modify the influence of each specific auxiliary function.
 
 Initially, we trained the classifier $$p(y)$$ for predicting valid samples to near 100% accuracy on
@@ -231,9 +229,10 @@ the training set. As a result, the classifier was over confident and its gradien
 very unstable. In particular, the gradient term dominated the guided diffusion and biased the samples to
 one of three local regions with the total sample space. We realized this mistake and
 re-trained the classifier with:
+
 - noisy data: we added noise to our training data during sampling
 - label smoothing: we turned hard targets like `valid` and `invalid`, codified as `[1,0]` and `[0,1]`, into
-soft targets like `[0.9, 0.1]`
+  soft targets like `[0.9, 0.1]`
 - increase regularization: we increased the dropout rates and weight decays
 - early stopping: we modified the stopping criteria to be based on calibration and confidence, not accuracy.
 
@@ -243,8 +242,8 @@ With these modifications, the samples generated from the diffusion model were mu
 
 A few things that surprised us or that I would have liked to know earlier:
 
-- **Variance schedule interacts with preprocessing.** Quantile normalization changed the data distribution enough that the cosine schedule's advantages largely disappeared. Benchmark your schedule choice after deciding on normalization.
-- **EMA is not optional.** For tabular data with smaller training sets, the ~30% validity improvement we saw from EMA was not a marginal gain. For us, it was the difference between a usable and an unusable model.
-- **Guidance can hurt if the classifier is overconfident.** Mode collapse disguised as high accuracy is a real failure mode. Train the guidance classifier on noisy inputs, use label smoothing, and evaluate on calibration rather than raw accuracy.
-- **Auxiliary guidance functions give you a tuning knob.** The $$\lambda_i$$ parameters let you dial in how strongly each auxiliary function influences sampling, which is much more flexible than 
-retraining the diffusion model itself.
+- Quantile normalization changed the data distribution enough that the cosine schedule's advantages largely disappeared. Benchmark your schedule choice after deciding on normalization.
+- For tabular data with smaller training sets, the ~30% validity improvement we saw from EMA was not a marginal gain. For us, it was the difference between a usable and an unusable model.
+- Mode collapse disguised as high accuracy is a real failure mode. Train the guidance classifier on noisy inputs, use label smoothing, and evaluate on calibration rather than raw accuracy.
+- The $$\lambda_i$$ parameters let you dial in how strongly each auxiliary function influences sampling, which is much more flexible than
+  retraining the diffusion model itself.

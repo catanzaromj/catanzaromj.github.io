@@ -15,7 +15,7 @@ Extending them to the tabular data of spreadsheets and databases is less straigh
 There are a variety of reasons why image and audio data is significantly different than tabular data.
 Images and audio data tend to be continuous and locally correlated. Nearby pixels tend to have similar
 values, and the sound of a song tends to build and fall fairly continuously throughout a piece of music.
-Diffusion models are based on a Gaussian noise process and so these data types tend to be very fit naturally
+Diffusion models are based on a Gaussian noise process and so these data types tend to fit naturally
 with this mathematical setup.
 Unfortunately, tabular data breaks both assumptions.
 
@@ -69,7 +69,7 @@ Several strategies have been explored:
 
 2. Score matching on a mixed space. You could do separate noise processes for continuous and discrete variables and then
    train a joint score function. This is more principled than option 1 but can be harder to train. There might not be a reason
-   apriori to expect your data to split so nicely between continuous and discrete.
+   a priori to expect your data to split so nicely between continuous and discrete.
 
 3. Auxiliary networks to guide sampling. Rather than modifying the noise process, one approach would be to add conditioning or
    a guidance network that steers the denoising trajectory toward valid, coherent outputs. This can be useful
@@ -93,7 +93,7 @@ None of these alone is sufficient, and they can conflict.
 ## My thoughts
 
 Given the plentiful amounts of tabular data available, I find it surprising that more research isn't done on this. I know a picture is worth
-1000 words, but there tons of business opportunities for analyzing and re-creating such data. Images and audio often require curation and
+1000 words, but there are tons of business opportunities for analyzing and re-creating such data. Images and audio often require curation and
 labeling to be useful for training. Healthcare records, financial transactions, logistics data, etc. are already labeled. It seems like
 there is a huge supply of interesting tabular data that exceeds what is being studied.
 

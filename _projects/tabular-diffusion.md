@@ -3,7 +3,7 @@ layout: page
 published: true
 title: Tabular Diffusion Models
 description: Diffusion models with auxiliary networks to guide sampling over structured tabular data.
-img:
+img: assets/img/tabular_diffusion_thumb.png
 importance: 2
 category: ml
 related_publications: false
@@ -43,3 +43,4 @@ In addition to the validity classifier, we trained over 30 auxiliary networks �
 
 - [Diffusion Models for Tabular Data]({% post_url 2025-05-06-tabular-diffusion %}) — motivation, the diffusion framework, strategies for mixed types, and evaluation challenges.
 - [Tabular Diffusion in Practice]({% post_url 2025-09-13-tabular-diffusion2 %}) — variance schedules, time embeddings, EMA, and inference-time guidance.
+- [Tabular Diffusion in Practice: SDEdit and Conditioning]({% post_url 2025-12-18-tabular-diffusion3 %}) — two techniques for steering a trained diffusion model toward specific outputs without retraining it.

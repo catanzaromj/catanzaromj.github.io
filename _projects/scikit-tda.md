@@ -60,4 +60,3 @@ simplicial complex — typically visualized as a graph — that captures the top
 shape of the data at a coarser level than a persistence diagram.
 KeplerMapper provides flexible filter functions, cover strategies, and built-in
 visualization tools.
-

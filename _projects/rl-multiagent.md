@@ -4,6 +4,7 @@ published: true
 title: Multi-Agent Reinforcement Learning
 description: Using topological stratifications to improve PPO and DQN agents in a multi-agent command-and-control environment.
 img: assets/img/publication_preview/rl_preview.png
+img_max_height: 150px
 importance: 1
 category: ml
 related_publications: true
