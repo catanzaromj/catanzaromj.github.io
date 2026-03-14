@@ -3,7 +3,7 @@ layout: page
 published: false
 title: scikit-tda
 description: Open-source maintainer of scikit-tda, a scikit-learn–compatible suite of TDA libraries.
-img:
+img: assets/img/scikit_tda.png
 importance: 4
 category: tda
 related_publications: true
@@ -51,8 +51,4 @@ simplicial complex — typically visualized as a graph — that captures the top
 shape of the data at a coarser level than a persistence diagram.
 KeplerMapper provides flexible filter functions, cover strategies, and built-in
 visualization tools.
-
-## Contributions
-
-<!-- TODO: describe specific contributions, PRs, issues, documentation, etc. -->
 
