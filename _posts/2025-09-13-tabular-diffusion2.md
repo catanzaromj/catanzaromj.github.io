@@ -184,7 +184,7 @@ this information early on and again at the end. Our network was a
 
 ## Exponential moving average
 
-During training, model weights are updated via gradient descent as usual. Expontential moving average (EMA) maintains a separate shadow copy of the weights as a running average:
+During training, model weights are updated via gradient descent as usual. Exponential moving average (EMA) maintains a separate shadow copy of the weights as a running average:
 
 $$
 \theta_{\text{ema}} \leftarrow \mu \cdot \theta_{\text{ema}} + (1 - \mu) \cdot \theta
@@ -208,14 +208,43 @@ $$
 \tilde{\mu}_\theta(x_t, t) = \mu_\theta(x_t, t) + s \cdot \Sigma_\theta(x_t, t) \nabla_{x_t} \log p(y \mid x_t)
 $$
 
-where $$s$$ is a guidance scale and $$p(y \mid x_t)$$ scores how plausible or valid a noisy sample is.
+where $$s$$ is a guidance scale and $$p(y \mid x_t)$$ scores how plausible or valid a noisy sample is. In practice,
+we let $$s$$ be near 0.4, but of course this depends on the magnitude of the gradient. This parameter was
+adjusted several times throughout, especially after re-training (see below).
 
 In our set-up, we had a variety of guidance functions to choose from. First, we had a trained classifier that
 predicted if a sample was valid or not (exactly the $$p$$ described above). But we could also augment the above
-formula with other guidance functions. We trained over 30 neural networks to predict auxiliary quantities of
-interest for each produce sample, trained on the samples in our training set.
+formula with other guidance functions. In addition, we trained over 30 neural networks to predict auxiliary quantities of
+interest for each produced sample, trained on the initial training set. With these additional neural networks,
+the mean for the sampling process becomes
 
-<!-- TODO: describe what your guidance function was targeting — what made a generated row valid in your domain? -->
-<!-- TODO: how did you implement p(y | x_t)? A classifier trained on noisy inputs? A domain constraint function? -->
-<!-- TODO: how did you choose the guidance scale s, and how sensitive were results to it? -->
-<!-- TODO: add a note on training the guidance model -->
+$$
+\tilde{\mu}_\theta(x_t, t) = \mu_\theta(x_t, t) + s \cdot \Sigma_\theta(x_t, t) \nabla_{x_t} \log p(y \mid x_t) - 
+\sum_i \lambda_i \nabla_{x_t} f_{\phi_i}(x_t)
+$$
+
+where $$f_{\phi_i}$$ are the auxiliary guidance functions. By tuning the $$\lambda_i$$ parameters, we can 
+modify the influence of each specific auxiliary function.
+
+Initially, we trained the classifier $$p(y)$$ for predicting valid samples to near 100% accuracy on
+the training set. As a result, the classifier was over confident and its gradient became
+very unstable. In particular, the gradient term dominated the guided diffusion and biased the samples to
+one of three local regions with the total sample space. We realized this mistake and
+re-trained the classifier with:
+- noisy data: we added noise to our training data during sampling
+- label smoothing: we turned hard targets like `valid` and `invalid`, codified as `[1,0]` and `[0,1]`, into
+soft targets like `[0.9, 0.1]`
+- increase regularization: we increased the dropout rates and weight decays
+- early stopping: we modified the stopping criteria to be based on calibration and confidence, not accuracy.
+
+With these modifications, the samples generated from the diffusion model were much more realistic and varied. The key lesson here is that guidance quality is as important as diffusion quality. A poorly calibrated classifier can actively harm sample diversity even when the underlying model is strong.
+
+## Takeaways
+
+A few things that surprised us or that I would have liked to know earlier:
+
+- **Variance schedule interacts with preprocessing.** Quantile normalization changed the data distribution enough that the cosine schedule's advantages largely disappeared. Benchmark your schedule choice after deciding on normalization.
+- **EMA is not optional.** For tabular data with smaller training sets, the ~30% validity improvement we saw from EMA was not a marginal gain. For us, it was the difference between a usable and an unusable model.
+- **Guidance can hurt if the classifier is overconfident.** Mode collapse disguised as high accuracy is a real failure mode. Train the guidance classifier on noisy inputs, use label smoothing, and evaluate on calibration rather than raw accuracy.
+- **Auxiliary guidance functions give you a tuning knob.** The $$\lambda_i$$ parameters let you dial in how strongly each auxiliary function influences sampling, which is much more flexible than 
+retraining the diffusion model itself.
