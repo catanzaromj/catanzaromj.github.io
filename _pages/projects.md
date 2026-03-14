@@ -5,7 +5,7 @@ permalink: /projects/
 description: I work on problems where geometry and structure matter, from reinforcement learning and generative models to topological data analysis. My background in algebraic topology gives me a unique perspective on ML. Persistent homology, geometric representations, and shape-aware features show up naturally in problems that standard ML and data science methods struggle with. Below is a selection of projects spanning applied ML, TDA, and some of the mathematical foundations underlying both.
 nav: true
 nav_order: 1
-display_categories: [tda, algebraic topology]
+display_categories: [ml, tda, algebraic topology]
 horizontal: false
 ---
 

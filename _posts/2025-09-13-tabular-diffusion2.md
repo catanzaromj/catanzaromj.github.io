@@ -66,54 +66,64 @@ $$
   \cos\left(\frac{t/T + s}{1 + s} \cdot \frac{\pi}{2}\right)^2
 $$
 
-where $$s \approx 0.008$$ is a small offset to keep $\beta_t$ from
-being too small near $t = 0$. Then $\beta_t = 1 - \bar{\alpha}t /
-  \bar{\alpha}{t-1}$.
+where $$s \approx 0.008$$ is a small offset to keep $$\beta_t$$ from
+being too small near $$t = 0$$. Then $$\beta_t = 1 - \bar{\alpha}_t / \bar{\alpha}_{t-1}$$.
 
 Plotting $$\bar{\alpha}_t$$ makes the differences between these three cases concrete:
 
 <div id="alpha-bar-plot" style="width:100%; height:400px;"></div>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% raw %}
 <script>
 (function() {
-  const T = 1000;
-  const betaMin = 0.0001;
-  const betaMax = 0.02;
-  const s = 0.008;
+  function renderPlot() {
+    const T = 1000;
+    const betaMin = 0.0001;
+    const betaMax = 0.02;
+    const s = 0.008;
 
-const t = Array.from({length: T}, (\_, i) => i + 1);
+    const t = Array.from({length: T}, (_, i) => i + 1);
 
-const betaLinear = t.map(i => betaMin + (i - 1) / (T - 1) _ (betaMax - betaMin));
-const betaQuad = t.map(i => betaMin + Math.pow((i - 1) / (T - 1), 2) _ (betaMax - betaMin));
+    const betaLinear = t.map(i => betaMin + (i - 1) / (T - 1) * (betaMax - betaMin));
+    const betaQuad = t.map(i => betaMin + Math.pow((i - 1) / (T - 1), 2) * (betaMax - betaMin));
 
-function alphaBar(betas) {
-const out = [];
-let prod = 1;
-for (const b of betas) { prod \*= (1 - b); out.push(prod); }
-return out;
+    function alphaBar(betas) {
+      const out = [];
+      let prod = 1;
+      for (const b of betas) { prod *= (1 - b); out.push(prod); }
+      return out;
+    }
+
+    const f0 = Math.pow(Math.cos((s / (1 + s)) * Math.PI / 2), 2);
+    const abCosine = t.map(i => {
+      const fi = Math.pow(Math.cos(((i / T) + s) / (1 + s) * Math.PI / 2), 2);
+      return fi / f0;
+    });
+
+    const traces = [
+      { x: t, y: alphaBar(betaLinear), name: 'Linear', mode: 'lines' },
+      { x: t, y: alphaBar(betaQuad), name: 'Quadratic', mode: 'lines' },
+      { x: t, y: abCosine, name: 'Cosine', mode: 'lines' },
+    ];
+
+    const layout = {
+      xaxis: { title: 't' },
+      yaxis: { title: 'ᾱ_t (signal retention)', range: [0, 1] },
+      legend: { orientation: 'h', y: -0.2 },
+      margin: { t: 20 },
+    };
+
+    Plotly.newPlot('alpha-bar-plot', traces, layout, { responsive: true });
+
 }
 
-const f0 = Math.pow(Math.cos((s / (1 + s)) _ Math.PI / 2), 2);
-const abCosine = t.map(i => {
-const fi = Math.pow(Math.cos(((i / T) + s) / (1 + s) _ Math.PI / 2), 2);
-return fi / f0;
-});
-
-const traces = [
-{ x: t, y: alphaBar(betaLinear), name: 'Linear', mode: 'lines' },
-{ x: t, y: alphaBar(betaQuad), name: 'Quadratic', mode: 'lines' },
-{ x: t, y: abCosine, name: 'Cosine', mode: 'lines' },
-];
-
-const layout = {
-xaxis: { title: 't' },
-yaxis: { title: 'ᾱ_t (signal retention)', range: [0, 1] },
-legend: { orientation: 'h', y: -0.2 },
-margin: { t: 20 },
-};
-
-Plotly.newPlot('alpha-bar-plot', traces, layout, { responsive: true });
+if (window.Plotly) {
+renderPlot();
+} else {
+var s = document.createElement('script');
+s.src = 'https://cdn.plot.ly/plotly-3.4.0.min.js';
+s.onload = renderPlot;
+document.head.appendChild(s);
+}
 })();
 </script>
 {% endraw %}
@@ -123,9 +133,11 @@ before dropping off, which is why it tends to produce better
 samples.
 
 Our choice was motivated by our results--we tried lots of different variance schedules
-and found linear worked best. We believe it was in part because we quantile normalized our data.
-This puts all the features on similar scales with similar distributions. Other than
-it worked best, I don't have a great explanation.
+and found linear worked best. We believe it was in part because we also quantile normalized our data.
+This puts all the features on similar scales with similar distributions.
+We determined "best" by lots of trial and error, and validating the outputs. Because
+our tabular data was pretty constrained, it is very easy to determine what percentage
+of outputs are actually "valid" in a concrete way.
 
 ## Time embeddings
 
@@ -172,7 +184,7 @@ this information early on and again at the end. Our network was a
 
 ## Exponential moving average
 
-During training, model weights are updated via gradient descent as usual. EMA maintains a separate shadow copy of the weights as a running average:
+During training, model weights are updated via gradient descent as usual. Expontential moving average (EMA) maintains a separate shadow copy of the weights as a running average:
 
 $$
 \theta_{\text{ema}} \leftarrow \mu \cdot \theta_{\text{ema}} + (1 - \mu) \cdot \theta
@@ -180,10 +192,13 @@ $$
 
 where $$\mu$$ is the decay rate (typically 0.999 or 0.9999). The EMA weights are not used during training — only at inference.
 
-The intuition is that the EMA weights average out gradient noise and tend to sit in flatter regions of the loss landscape. For tabular data, where training sets can be small relative to image benchmarks, this stabilization matters more than you might expect.
+The intuition is that the EMA weights average out gradient noise and tend to
+sit in flatter regions of the loss landscape. For tabular data, where training
+sets can be small relative to image benchmarks, this stabilization matters more
+than you might expect.
 
-<!-- TODO: what decay rate did you use, and how did you choose it? -->
-<!-- TODO: how much did EMA matter in your experiments? Was the gap between EMA and non-EMA samples noticeable on your evaluation metrics? -->
+We found a pretty dramatic difference between EMA and non-EMA samples. EMA samples tended to be valid almost 30% more of the time
+compared to the non-EMA samples. They also tended to be more realistic, with the non-EMA samples being more wild.
 
 ## Guidance at inference
 
@@ -195,11 +210,12 @@ $$
 
 where $$s$$ is a guidance scale and $$p(y \mid x_t)$$ scores how plausible or valid a noisy sample is.
 
+In our set-up, we had a variety of guidance functions to choose from. First, we had a trained classifier that
+predicted if a sample was valid or not (exactly the $$p$$ described above). But we could also augment the above
+formula with other guidance functions. We trained over 30 neural networks to predict auxiliary quantities of
+interest for each produce sample, trained on the samples in our training set.
+
 <!-- TODO: describe what your guidance function was targeting — what made a generated row valid in your domain? -->
 <!-- TODO: how did you implement p(y | x_t)? A classifier trained on noisy inputs? A domain constraint function? -->
 <!-- TODO: how did you choose the guidance scale s, and how sensitive were results to it? -->
 <!-- TODO: add a note on training the guidance model -->
-
-## Further reading
-
-<!-- TODO: add any references beyond those in the first post -->
