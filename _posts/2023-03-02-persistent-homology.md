@@ -104,7 +104,7 @@ clock.
 ![Six smaller circles arranged in a much larger circle.](/assets/img/cir_of_cirs.png){: width="400" style="display:block; margin:auto"}
 
 What is the shape of this data? If you were "zoomed in", you might only see the individual points
-but not their arrangement in to circles. As you zoom out, you would start to see the 6 individual
+but not their arrangement into circles. As you zoom out, you would start to see the 6 individual
 circles but still not their global arrangement into yet another circle. Finally as you zoom out more,
 the 6 individual circles might start to become difficult to make out, but you would definitely now
 start to see the global arrangement of a circle. Finally, as you zoom even farther out, you would see
@@ -142,7 +142,7 @@ The explorer shows two filtrations side by side: **Vietoris–Rips** and **Čech
 The persistence diagram is not just a scatter plot. It is a coordinate-free,
 multi-scale summary of shape. The stability theorem guarantees that small
 perturbations to the point cloud move points in the diagram by at most the same
-amount. This should be interpretted as saying the diagram is robust to noise in the data,
+amount. This should be interpreted as saying the diagram is robust to noise in the data,
 an essential property for any real data science algorithm. But robustness is not
 the same as interpretability. The diagram records topology at every scale
 simultaneously, and which features matter depends on the question you are
