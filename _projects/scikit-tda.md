@@ -6,7 +6,7 @@ description: Open-source maintainer of scikit-tda, a scikit-learn–compatible s
 img: assets/img/scikit_tda.png
 importance: 4
 category: tda
-related_publications: true
+related_publications: false
 ---
 
 [scikit-tda](https://scikit-tda.org) is an open-source ecosystem of Python libraries for
@@ -15,6 +15,8 @@ I contribute as a maintainer of the project, which spans several packages coveri
 different parts of the TDA pipeline.
 
 ## Packages
+
+scikit-tda includes a variety of packages. Here are some of which I contribute to.
 
 ### [Ripser.py](https://ripser.scikit-tda.org)
 
