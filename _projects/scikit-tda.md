@@ -43,6 +43,13 @@ Cechmate provides access to the geometrically tighter Čech complex — useful w
 exact topological guarantees (via the nerve theorem) are needed and computational
 cost is acceptable.
 
+### [Tadasets](https://tadasets.scikit-tda.org)
+
+A library of benchmark datasets for TDA research. It provides clean, parameterized
+point cloud generators, including circles, tori, Swiss rolls, figure-eights, and more. These are useful
+for testing pipelines and building intuition. Datasets can be sampled with controlled
+noise levels, making it easy to study how robust a method is to perturbation.
+
 ### [KeplerMapper](https://kepler-mapper.scikit-tda.org)
 
 An implementation of the Mapper algorithm, a method for producing
